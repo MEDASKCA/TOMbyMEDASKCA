@@ -616,8 +616,123 @@ export default function StaffCompetencyModal({ isOpen, onClose, staff }: StaffCo
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 lg:bg-transparent flex items-center justify-center lg:justify-start lg:items-stretch z-50 lg:pointer-events-none">
-      <div className="bg-white lg:rounded-r-lg shadow-xl w-full h-full lg:w-[600px] lg:h-full overflow-hidden flex flex-col lg:pointer-events-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-50 lg:bg-transparent flex items-center justify-center lg:justify-start lg:items-stretch z-50">
+      {/* Desktop: Staff Info Panel on the left (hidden on mobile) */}
+      <div className="hidden lg:block lg:w-96 bg-white h-full shadow-xl overflow-y-auto p-4 border-r border-gray-200">
+        {/* Staff Header */}
+        <div className="border-b border-gray-200 pb-3 mb-3">
+          <div className="flex items-start justify-between">
+            <div>
+              <h3 className="font-bold text-gray-900 text-lg">{staff.name}</h3>
+              <p className="text-sm text-gray-600">{staff.role}</p>
+              <p className="text-xs text-gray-500 mt-1">ID: {staffDetailsForContext.employeeId}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-gray-500">Shift</p>
+              <p className="text-sm font-medium">{staffDetailsForContext.shiftStart} - {staffDetailsForContext.shiftEnd}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Location and Breaks */}
+        <div className="bg-gray-50 rounded-lg p-3 mb-3">
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="flex items-center space-x-1">
+              <MapPin className="w-3 h-3 text-gray-400" />
+              <span className="font-medium">Location:</span>
+            </div>
+            <div className="text-xs text-gray-600">{staffDetailsForContext.currentLocation}</div>
+            <div className="flex items-center space-x-1">
+              <Coffee className="w-3 h-3 text-gray-400" />
+              <span className="font-medium">Breaks:</span>
+            </div>
+            <div className={staffDetailsForContext.breakStatus.taken ? 'text-green-600 text-xs' : 'text-orange-600 text-xs'}>
+              {staffDetailsForContext.breakStatus.totalBreaks}
+            </div>
+          </div>
+          {!staffDetailsForContext.breakStatus.taken && (
+            <div className="mt-2 px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs">
+              ⚠️ Break overdue
+            </div>
+          )}
+        </div>
+
+        {/* Competencies Summary */}
+        <div className="mb-3">
+          <h4 className="text-xs font-semibold text-gray-700 mb-2 flex items-center">
+            <Award className="w-3 h-3 mr-1" />
+            Top Competencies
+          </h4>
+          <div className="space-y-1">
+            {specialties.filter(s => s.level === 'Expert').slice(0, 3).map((comp) => (
+              <div
+                key={comp.id}
+                className={`flex items-center justify-between px-2 py-1 rounded border text-xs ${getCompetencyColor(comp.level)}`}
+              >
+                <span className="font-medium text-xs truncate">{comp.name}</span>
+                <div className="flex items-center space-x-1">
+                  <span className="text-xs">{comp.level}</span>
+                  {comp.certified && <Shield className="w-3 h-3" />}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Relief Availability */}
+        <div className="mb-3">
+          <h4 className="text-xs font-semibold text-gray-700 mb-2 flex items-center">
+            <Activity className="w-3 h-3 mr-1" />
+            Can Relieve In:
+          </h4>
+          <div className="grid grid-cols-2 gap-1 text-xs">
+            {staffDetailsForContext.canRelieveIn.map((theatre: any, idx: number) => (
+              <div
+                key={idx}
+                className={`flex items-center space-x-1 p-1 rounded ${
+                  theatre.available ? 'bg-green-50' : 'bg-gray-50'
+                }`}
+                title={theatre.reason}
+              >
+                {theatre.available ? (
+                  <CheckCircle className="w-3 h-3 text-green-600" />
+                ) : (
+                  <XCircle className="w-3 h-3 text-gray-400" />
+                )}
+                <span className={theatre.available ? 'text-green-700 text-xs' : 'text-gray-500 text-xs'}>
+                  {theatre.theatre}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Today's Activity */}
+        <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
+          <h4 className="text-xs font-semibold text-blue-700 mb-1">Today&apos;s Activity</h4>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div>
+              <span className="text-gray-600">Cases:</span>
+              <span className="font-medium ml-1">{staffDetailsForContext.todaysActivity.casesCompleted}</span>
+            </div>
+            <div>
+              <span className="text-gray-600">Reliefs:</span>
+              <span className="font-medium ml-1">{staffDetailsForContext.todaysActivity.reliefProvided}</span>
+            </div>
+            <div>
+              <span className="text-gray-600">Efficiency:</span>
+              <span className="font-medium ml-1 text-green-600">{staffDetailsForContext.todaysActivity.averageEfficiency}</span>
+            </div>
+            <div>
+              <span className="text-gray-600">Overtime:</span>
+              <span className="font-medium ml-1">{staffDetailsForContext.todaysActivity.overtime}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Competency Modal */}
+      <div className="bg-white lg:rounded-r-lg shadow-xl w-full h-full lg:w-[600px] lg:h-full overflow-hidden flex flex-col">
         {/* Header */}
         <div className="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white p-4">
           <div className="flex items-center justify-between">
