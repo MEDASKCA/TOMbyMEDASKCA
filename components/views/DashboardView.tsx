@@ -769,58 +769,61 @@ export default function DashboardView() {
   });
 
   return (
-    <div className="p-6">
+    <div className="p-2 sm:p-6">
       {/* Page Header */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">Operations Dashboard</h1>
-            <p className="text-sm text-gray-600 mt-1">Real-time theatre management and monitoring</p>
-          </div>
+      <div className="mb-4 sm:mb-6">
+        {/* Title */}
+        <div className="mb-3">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Operations Dashboard</h1>
+          <p className="text-xs sm:text-sm text-gray-600 mt-1">Real-time theatre management and monitoring</p>
+        </div>
 
-          {/* Unit Filter Buttons */}
-          <div className="flex gap-2">
-            <button
-              onClick={() => setSelectedUnit('all')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                selectedUnit === 'all'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              All Units
-            </button>
-            <button
-              onClick={() => setSelectedUnit('main')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                selectedUnit === 'main'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Main Theatres
-            </button>
-            <button
-              onClick={() => setSelectedUnit('acad')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                selectedUnit === 'acad'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              ACAD Theatres
-            </button>
-            <button
-              onClick={() => setSelectedUnit('recovery')}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                selectedUnit === 'recovery'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Recovery Areas
-            </button>
-          </div>
+        {/* Unit Filter Buttons - Stack on mobile, inline on desktop */}
+        <div className="grid grid-cols-4 gap-2 sm:flex sm:gap-2 sm:justify-end">
+          <button
+            onClick={() => setSelectedUnit('all')}
+            className={`px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+              selectedUnit === 'all'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            <span className="sm:hidden">All</span>
+            <span className="hidden sm:inline">All Units</span>
+          </button>
+          <button
+            onClick={() => setSelectedUnit('main')}
+            className={`px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+              selectedUnit === 'main'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            <span className="sm:hidden">Main</span>
+            <span className="hidden sm:inline">Main Theatres</span>
+          </button>
+          <button
+            onClick={() => setSelectedUnit('acad')}
+            className={`px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+              selectedUnit === 'acad'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            <span className="sm:hidden">ACAD</span>
+            <span className="hidden sm:inline">ACAD Theatres</span>
+          </button>
+          <button
+            onClick={() => setSelectedUnit('recovery')}
+            className={`px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
+              selectedUnit === 'recovery'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            <span className="sm:hidden">Recovery</span>
+            <span className="hidden sm:inline">Recovery Areas</span>
+          </button>
         </div>
       </div>
 
@@ -937,7 +940,7 @@ export default function DashboardView() {
                       {allocation.patientStatus || (allocation.status === 'closed' ? '⛔ CLOSED' : allocation.status.toUpperCase())}
                     </span>
                   </div>
-                  <p className="text-xs text-gray-600 font-medium">{allocation.specialty}</p>
+                  <p className="text-sm sm:text-xs text-gray-600 font-medium">{allocation.specialty}</p>
                   <p className="text-xs text-gray-500">
                     {allocation.session} {allocation.sessionsCount > 0 && `• ${allocation.sessionsCount} Session${allocation.sessionsCount > 1 ? 's' : ''}`}
                     {allocation.casesCompleted !== undefined && allocation.sessionsCount > 0 && (
@@ -978,29 +981,31 @@ export default function DashboardView() {
                     const needsReliefHighlight = staff.shift && staff.shift.startsWith('08:00') && staff.shift.endsWith('20:00');
 
                     return (
-                      <div key={label} className="flex items-center justify-between group/staff">
-                        <div className="flex items-center flex-1 min-w-0">
-                          <span className={`mr-1 min-w-[70px] flex-shrink-0 text-[10px] ${staff.name === 'VACANT' ? 'text-gray-400' : 'text-gray-500'}`}>
-                            {label}:
-                          </span>
-                          {staff.name === 'VACANT' ? (
-                            <span className="text-gray-400 italic text-[10px]">Vacant</span>
-                          ) : (
-                            <div className="flex items-center gap-1 min-w-0">
-                              <span
-                                className={`cursor-pointer hover:text-blue-600 hover:underline truncate ${
-                                  needsReliefHighlight ? 'text-orange-600 font-semibold' : ''
-                                }`}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleStaffClick(staff.name.replace(/[☕⚠️]/g, '').trim(), staff.role, allocation.theatre);
-                                }}
-                                onMouseEnter={(e) => handleStaffHover(e, staff.name.replace(/[☕⚠️]/g, '').trim(), staff.role)}
-                                onMouseLeave={() => setHoveredStaff(null)}
-                                title={`${staff.name}${staff.shift ? ` (${staff.shift})` : ''}`}
-                              >
-                                {staff.name.replace(/[☕⚠️]/g, '').trim()}
-                              </span>
+                      <div key={label} className="group/staff">
+                        {/* Mobile: Stack vertically, Desktop: Horizontal */}
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                          <div className="flex flex-col sm:flex-row sm:items-center sm:flex-1 sm:min-w-0">
+                            <span className={`text-xs sm:text-[10px] font-medium sm:font-normal sm:mr-1 sm:min-w-[70px] sm:flex-shrink-0 ${staff.name === 'VACANT' ? 'text-gray-400' : 'text-gray-600 sm:text-gray-500'}`}>
+                              {label}:
+                            </span>
+                            {staff.name === 'VACANT' ? (
+                              <span className="text-gray-400 italic text-sm sm:text-[10px] ml-1 sm:ml-0">Vacant</span>
+                            ) : (
+                              <div className="flex items-center gap-1 min-w-0 mt-0.5 sm:mt-0">
+                                <span
+                                  className={`cursor-pointer hover:text-blue-600 hover:underline truncate text-sm sm:text-[10px] ${
+                                    needsReliefHighlight ? 'text-orange-600 font-semibold' : ''
+                                  }`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleStaffClick(staff.name.replace(/[☕⚠️]/g, '').trim(), staff.role, allocation.theatre);
+                                  }}
+                                  onMouseEnter={(e) => handleStaffHover(e, staff.name.replace(/[☕⚠️]/g, '').trim(), staff.role)}
+                                  onMouseLeave={() => setHoveredStaff(null)}
+                                  title={`${staff.name}${staff.shift ? ` (${staff.shift})` : ''}`}
+                                >
+                                  {staff.name.replace(/[☕⚠️]/g, '').trim()}
+                                </span>
                               {staff.scrubbed && (
                                 <span
                                   className="italic text-[9px] text-gray-500 flex-shrink-0"
@@ -1031,14 +1036,15 @@ export default function DashboardView() {
                               )}
                             </div>
                           )}
+                          </div>
+                          {staff.shift && staff.name !== 'VACANT' && (
+                            <span className={`text-xs sm:text-[9px] text-gray-500 sm:text-gray-400 sm:ml-1 flex-shrink-0 ${
+                              needsReliefHighlight ? 'text-orange-500 font-medium' : ''
+                            }`}>
+                              {staff.shift}
+                            </span>
+                          )}
                         </div>
-                        {staff.shift && staff.name !== 'VACANT' && (
-                          <span className={`text-[9px] text-gray-400 ml-1 flex-shrink-0 ${
-                            needsReliefHighlight ? 'text-orange-500 font-medium' : ''
-                          }`}>
-                            {staff.shift}
-                          </span>
-                        )}
                       </div>
                     );
                   }).filter(Boolean)}
