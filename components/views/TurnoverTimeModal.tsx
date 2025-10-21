@@ -213,13 +213,13 @@ export default function TurnoverTimeModal({ isOpen, onClose }: TurnoverTimeModal
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-7xl w-full max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center lg:p-4 z-50">
+      <div className="bg-white lg:rounded-lg shadow-xl max-w-7xl w-full h-full lg:max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-4 flex items-center justify-between">
+        <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-3 flex items-center justify-between flex-shrink-0">
           <div>
-            <h2 className="text-xl font-bold">Average Turnover Time Analysis</h2>
-            <p className="text-purple-100 text-sm mt-1">
+            <h2 className="text-lg font-bold">Average Turnover Time Analysis</h2>
+            <p className="text-purple-100 text-xs mt-1">
               Real-time theatre turnover performance - Today's Summary
             </p>
           </div>
@@ -231,169 +231,154 @@ export default function TurnoverTimeModal({ isOpen, onClose }: TurnoverTimeModal
           </button>
         </div>
 
-        {/* Summary Cards */}
-        <div className="p-6 bg-gray-50 border-b border-gray-200">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
-            <div className="bg-white rounded-lg p-4 border border-gray-200">
-              <p className="text-xs text-gray-600 mb-1">Average Turnover</p>
-              <p className="text-2xl font-bold text-purple-600">{todaysSummary.averageTurnover} min</p>
-              <p className="text-xs text-green-600 mt-1">✓ {todaysSummary.target - todaysSummary.averageTurnover} min under target</p>
-            </div>
-            <div className="bg-white rounded-lg p-4 border border-gray-200">
-              <p className="text-xs text-gray-600 mb-1">Target Time</p>
-              <p className="text-2xl font-bold text-gray-700">{todaysSummary.target} min</p>
-            </div>
-            <div className="bg-white rounded-lg p-4 border border-gray-200">
-              <p className="text-xs text-gray-600 mb-1">Total Turnovers</p>
-              <p className="text-2xl font-bold text-blue-600">{todaysSummary.totalTurnovers}</p>
-            </div>
-            <div className="bg-white rounded-lg p-4 border border-gray-200">
-              <p className="text-xs text-gray-600 mb-1">On Target</p>
-              <p className="text-2xl font-bold text-green-600">{todaysSummary.onTarget}</p>
-            </div>
-            <div className="bg-white rounded-lg p-4 border border-gray-200">
-              <p className="text-xs text-gray-600 mb-1">Delayed</p>
-              <p className="text-2xl font-bold text-red-600">{todaysSummary.delayed}</p>
+        {/* Main Content Area - Flex Row */}
+        <div className="flex flex-1 overflow-hidden">
+          {/* Left Sidebar - Stats (Fixed, Compact) */}
+          <div className="w-48 bg-gray-50 border-r border-gray-200 p-3 flex-shrink-0 overflow-y-auto">
+            <div className="space-y-2">
+              <div className="bg-white rounded-lg p-2 border border-gray-200">
+                <p className="text-[10px] text-gray-600 mb-1">Average Turnover</p>
+                <p className="text-lg font-bold text-purple-600">{todaysSummary.averageTurnover} min</p>
+              </div>
+              <div className="bg-white rounded-lg p-2 border border-gray-200">
+                <p className="text-[10px] text-gray-600 mb-1">Target Time</p>
+                <p className="text-lg font-bold text-gray-700">{todaysSummary.target} min</p>
+              </div>
+              <div className="bg-white rounded-lg p-2 border border-gray-200">
+                <p className="text-[10px] text-gray-600 mb-1">Total Turnovers</p>
+                <p className="text-lg font-bold text-blue-600">{todaysSummary.totalTurnovers}</p>
+              </div>
+              <div className="bg-white rounded-lg p-2 border border-gray-200">
+                <p className="text-[10px] text-gray-600 mb-1">On Target</p>
+                <p className="text-lg font-bold text-green-600">{todaysSummary.onTarget}</p>
+              </div>
+              <div className="bg-white rounded-lg p-2 border border-gray-200">
+                <p className="text-[10px] text-gray-600 mb-1">Delayed</p>
+                <p className="text-lg font-bold text-red-600">{todaysSummary.delayed}</p>
+              </div>
+              <div className="bg-green-50 rounded-lg p-2 border border-green-200">
+                <p className="text-[10px] text-green-700 font-semibold mb-1">Best Performance</p>
+                <p className="text-xs font-bold text-green-900">{todaysSummary.bestTheatre}</p>
+              </div>
+              <div className="bg-red-50 rounded-lg p-2 border border-red-200">
+                <p className="text-[10px] text-red-700 font-semibold mb-1">Needs Attention</p>
+                <p className="text-xs font-bold text-red-900">{todaysSummary.worstTheatre}</p>
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-green-50 rounded-lg p-3 border border-green-200">
-              <p className="text-xs text-green-700 font-semibold mb-1">Best Performance</p>
-              <p className="text-sm font-bold text-green-900">{todaysSummary.bestTheatre}</p>
+          {/* Right Content Area */}
+          <div className="flex-1 flex flex-col overflow-hidden">
+            {/* Filters - Compact, at top */}
+            <div className="p-2 bg-white border-b border-gray-200 flex-shrink-0">
+              <div className="flex flex-col space-y-2">
+                <div className="flex items-center space-x-2 flex-wrap">
+                  <Filter className="w-3 h-3 text-gray-500" />
+                  <span className="text-xs font-medium text-gray-700">Filter by Unit:</span>
+                  {(['all', 'main', 'acad', 'recovery'] as const).map((unit) => (
+                    <button
+                      key={unit}
+                      onClick={() => setSelectedUnit(unit)}
+                      className={`px-2 py-1 rounded text-[10px] font-medium transition-colors ${
+                        selectedUnit === unit
+                          ? 'bg-purple-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {unit === 'all' ? 'All Units' : unit.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex items-center space-x-2 flex-wrap">
+                  <BarChart3 className="w-3 h-3 text-gray-500" />
+                  <button
+                    className="px-2 py-1 bg-blue-600 text-white rounded text-[10px] font-medium hover:bg-blue-700 transition-colors"
+                  >
+                    View Period Analytics
+                  </button>
+                </div>
+              </div>
             </div>
-            <div className="bg-red-50 rounded-lg p-3 border border-red-200">
-              <p className="text-xs text-red-700 font-semibold mb-1">Needs Attention</p>
-              <p className="text-sm font-bold text-red-900">{todaysSummary.worstTheatre}</p>
-            </div>
-          </div>
-        </div>
 
-        {/* Filters */}
-        <div className="p-4 bg-white border-b border-gray-200 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Filter className="w-4 h-4 text-gray-500" />
-            <span className="text-sm font-medium text-gray-700">Filter by Unit:</span>
-            {(['all', 'main', 'acad', 'recovery'] as const).map((unit) => (
-              <button
-                key={unit}
-                onClick={() => setSelectedUnit(unit)}
-                className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                  selectedUnit === unit
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {unit === 'all' ? 'All Units' : unit.toUpperCase()}
-              </button>
-            ))}
-          </div>
-          <button
-            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-          >
-            <BarChart3 className="w-4 h-4" />
-            <span>View Period Analytics</span>
-          </button>
-        </div>
-
-        {/* Theatre List */}
-        <div className="overflow-y-auto max-h-[calc(90vh-450px)] p-6">
-          <div className="space-y-3">
-            {filteredTheatres.map((theatre) => (
-              <div
-                key={theatre.theatre}
-                className={`rounded-lg p-4 border-2 ${getPerformanceColor(theatre.currentTurnover, theatre.target)}`}
-              >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <h3 className="font-bold text-gray-900">{theatre.theatre}</h3>
-                      {getTrendIcon(theatre.trend)}
-                      <span className="text-xs font-medium capitalize">({theatre.trend})</span>
+            {/* Theatre List - Scrollable */}
+            <div className="flex-1 overflow-y-auto p-3">
+              <div className="space-y-3">
+                {filteredTheatres.map((theatre) => (
+                  <div
+                    key={theatre.theatre}
+                    className={`rounded-lg p-4 border-2 ${getPerformanceColor(theatre.currentTurnover, theatre.target)}`}
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <h3 className="font-bold text-gray-900">{theatre.theatre}</h3>
+                          {getTrendIcon(theatre.trend)}
+                          <span className="text-xs font-medium capitalize">({theatre.trend})</span>
+                        </div>
+                        <div className="grid grid-cols-4 gap-3 text-sm">
+                          <div>
+                            <p className="text-xs text-gray-600">Current Turnover</p>
+                            <p className="font-bold">{theatre.currentTurnover} min</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-600">Today's Average</p>
+                            <p className="font-bold">{theatre.avgTurnover} min</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-600">Turnovers Today</p>
+                            <p className="font-bold">{theatre.turnoversToday}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-600">On Target / Delayed</p>
+                            <p className="font-bold">
+                              <span className="text-green-600">{theatre.onTarget}</span>
+                              {' / '}
+                              <span className="text-red-600">{theatre.delayed}</span>
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-right ml-4">
+                        <p className="text-xs text-gray-600">Last Turnover</p>
+                        <p className="text-sm font-bold">{theatre.lastTurnover}</p>
+                        <p className="text-xs text-blue-600 mt-1">Next: {theatre.nextCase}</p>
+                      </div>
                     </div>
-                    <div className="grid grid-cols-4 gap-3 text-sm">
-                      <div>
-                        <p className="text-xs text-gray-600">Current Turnover</p>
-                        <p className="font-bold">{theatre.currentTurnover} min</p>
+
+                    {/* Delay Reasons */}
+                    {theatre.delayReasons.length > 0 && (
+                      <div className="mt-3 pt-3 border-t border-gray-300">
+                        <p className="text-xs font-semibold text-gray-700 mb-2 flex items-center">
+                          <AlertTriangle className="w-3 h-3 mr-1" />
+                          Delays Today
+                        </p>
+                        <div className="space-y-1">
+                          {theatre.delayReasons.map((delay, idx) => (
+                            <div key={idx} className="bg-white bg-opacity-50 rounded p-2 text-xs">
+                              <span className="font-medium">{delay.time}</span>
+                              {' - '}
+                              <span>{delay.reason}</span>
+                              {' '}
+                              <span className="text-red-600 font-semibold">(+{delay.duration})</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-xs text-gray-600">Today's Average</p>
-                        <p className="font-bold">{theatre.avgTurnover} min</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-600">Turnovers Today</p>
-                        <p className="font-bold">{theatre.turnoversToday}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-600">On Target / Delayed</p>
-                        <p className="font-bold">
-                          <span className="text-green-600">{theatre.onTarget}</span>
-                          {' / '}
-                          <span className="text-red-600">{theatre.delayed}</span>
+                    )}
+
+                    {/* Success indicator */}
+                    {theatre.delayed === 0 && theatre.turnoversToday > 0 && (
+                      <div className="mt-3 pt-3 border-t border-gray-300">
+                        <p className="text-xs font-medium text-green-700 flex items-center">
+                          <CheckCircle className="w-3 h-3 mr-1" />
+                          All turnovers on target today
                         </p>
                       </div>
-                    </div>
+                    )}
                   </div>
-                  <div className="text-right ml-4">
-                    <p className="text-xs text-gray-600">Last Turnover</p>
-                    <p className="text-sm font-bold">{theatre.lastTurnover}</p>
-                    <p className="text-xs text-blue-600 mt-1">Next: {theatre.nextCase}</p>
-                  </div>
-                </div>
-
-                {/* Delay Reasons */}
-                {theatre.delayReasons.length > 0 && (
-                  <div className="mt-3 pt-3 border-t border-gray-300">
-                    <p className="text-xs font-semibold text-gray-700 mb-2 flex items-center">
-                      <AlertTriangle className="w-3 h-3 mr-1" />
-                      Delays Today
-                    </p>
-                    <div className="space-y-1">
-                      {theatre.delayReasons.map((delay, idx) => (
-                        <div key={idx} className="bg-white bg-opacity-50 rounded p-2 text-xs">
-                          <span className="font-medium">{delay.time}</span>
-                          {' - '}
-                          <span>{delay.reason}</span>
-                          {' '}
-                          <span className="text-red-600 font-semibold">(+{delay.duration})</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Success indicator */}
-                {theatre.delayed === 0 && theatre.turnoversToday > 0 && (
-                  <div className="mt-3 pt-3 border-t border-gray-300">
-                    <p className="text-xs font-medium text-green-700 flex items-center">
-                      <CheckCircle className="w-3 h-3 mr-1" />
-                      All turnovers on target today
-                    </p>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="p-4 bg-gray-50 border-t border-gray-200">
-          <div className="flex items-center justify-between text-xs text-gray-600">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center">
-                <div className="w-3 h-3 bg-green-100 border-2 border-green-300 rounded mr-2"></div>
-                <span>Excellent (&lt;75% of target)</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-3 h-3 bg-yellow-100 border-2 border-yellow-300 rounded mr-2"></div>
-                <span>Good (75-100% of target)</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-3 h-3 bg-red-100 border-2 border-red-300 rounded mr-2"></div>
-                <span>Over Target (&gt;100%)</span>
+                ))}
               </div>
             </div>
-            <p className="italic">Last updated: Just now</p>
           </div>
         </div>
       </div>
