@@ -32,17 +32,17 @@ export default function TheatreTimelineModal({ isOpen, onClose, theatre }: Theat
       patient: 'MRN: 12345678',
       surgeon: 'J. Smith',
       timeline: [
-        { time: '07:30', event: 'Patient sent for', status: 'completed', ward: 'Ward 7B' },
-        { time: '07:45', event: 'Patient arrived in reception', status: 'completed' },
-        { time: '07:50', event: 'Pre-op checks complete', status: 'completed', staff: 'A. Flores (RN1)' },
+        { time: '07:30', event: 'Patient sent for', status: 'completed', ward: 'Ward 7B', comment: 'Request sent to porter (J. Williams)' },
+        { time: '07:45', event: 'Patient arrived in reception', status: 'completed', comment: 'Accepted by RN M. Johnson' },
+        { time: '07:50', event: 'Pre-op checks complete', status: 'completed', staff: 'A. Flores (RN1)', comment: 'Patient with slightly elevated BP 145/92 - Anaesthetist informed' },
         { time: '08:00', event: 'Into theatre', status: 'completed' },
-        { time: '08:10', event: 'Anaesthetic start', status: 'completed', staff: 'F. James', note: 'WHO checklist completed' },
+        { time: '08:10', event: 'Anaesthetic start', status: 'completed', staff: 'F. James', note: 'WHO checklist completed', comment: 'General anaesthesia induced, no complications' },
         { time: '08:45', event: 'Staff relief', status: 'relief', staff: 'F. James relieved by S. Patel (coffee break)' },
-        { time: '08:50', event: 'Surgery start', status: 'completed', staff: 'J. Smith (Lead), A. Gallagher (Assist)' },
+        { time: '08:50', event: 'Surgery start', status: 'completed', staff: 'J. Smith (Lead), A. Gallagher (Assist)', comment: 'Incision made, prosthesis prepared' },
         { time: '09:00', event: 'Staff returned', status: 'relief', staff: 'F. James returned from break' },
-        { time: '10:30', event: 'Surgery end', status: 'completed' },
-        { time: '10:45', event: 'To recovery', status: 'completed', staff: 'Handover to M. Wilson (Recovery RN)' },
-        { time: '11:30', event: 'Discharged to ward', status: 'completed', ward: 'HDU Level 2' }
+        { time: '10:30', event: 'Surgery end', status: 'completed', comment: 'Procedure completed successfully, minimal blood loss' },
+        { time: '10:45', event: 'To recovery', status: 'completed', staff: 'Handover to M. Wilson (Recovery RN)', comment: 'Patient stable, vital signs normal' },
+        { time: '11:30', event: 'Discharged to ward', status: 'completed', ward: 'HDU Level 2', comment: 'Patient mobilising well, pain controlled' }
       ],
       alerts: [
         { type: 'delay', message: '15 min delay - awaiting implant delivery', time: '08:35' }
@@ -55,9 +55,9 @@ export default function TheatreTimelineModal({ isOpen, onClose, theatre }: Theat
       patient: 'MRN: 87654321',
       surgeon: 'J. Smith',
       timeline: [
-        { time: '11:30', event: 'Patient sent for', status: 'completed', ward: 'Day Surgery Unit' },
-        { time: '11:45', event: 'Patient arrived in reception', status: 'completed' },
-        { time: '12:00', event: 'Into theatre', status: 'in-progress' },
+        { time: '11:30', event: 'Patient sent for', status: 'completed', ward: 'Day Surgery Unit', comment: 'Porter assigned (K. Thomas)' },
+        { time: '11:45', event: 'Patient arrived in reception', status: 'completed', comment: 'Pre-op fasting confirmed 6+ hours' },
+        { time: '12:00', event: 'Into theatre', status: 'in-progress', comment: 'Patient transfer in progress' },
         { time: '12:10', event: 'Anaesthetic start', status: 'pending', staff: 'S. Patel' },
         { time: '12:25', event: 'Surgery start', status: 'pending' },
         { time: '13:00', event: 'Surgery end', status: 'pending' },
@@ -157,8 +157,25 @@ export default function TheatreTimelineModal({ isOpen, onClose, theatre }: Theat
               {/* Timeline */}
               <div className="px-6 py-4">
                 <div className="relative">
-                  {/* Timeline line */}
+                  {/* Timeline line - gray for whole timeline */}
                   <div className="absolute left-16 top-0 bottom-0 w-0.5 bg-gray-300"></div>
+
+                  {/* Colored line for completed stages */}
+                  {proc.timeline.map((event, eventIdx) => {
+                    const isCompleted = event.status === 'completed';
+                    const nextEventCompleted = eventIdx < proc.timeline.length - 1 && proc.timeline[eventIdx + 1].status === 'completed';
+
+                    return isCompleted && eventIdx < proc.timeline.length - 1 ? (
+                      <div
+                        key={`line-${eventIdx}`}
+                        className="absolute left-16 w-0.5 bg-green-500"
+                        style={{
+                          top: `${eventIdx * 80}px`,
+                          height: nextEventCompleted ? '80px' : '40px'
+                        }}
+                      ></div>
+                    ) : null;
+                  })}
 
                   {proc.timeline.map((event, eventIdx) => (
                     <div key={eventIdx} className="relative flex items-start mb-4 last:mb-0">
@@ -192,6 +209,11 @@ export default function TheatreTimelineModal({ isOpen, onClose, theatre }: Theat
                           {event.note && (
                             <div className="text-xs mt-1 italic text-gray-600">
                               {event.note}
+                            </div>
+                          )}
+                          {event.comment && (
+                            <div className="text-xs mt-1 text-blue-700 bg-blue-50 px-2 py-1 rounded">
+                              💬 {event.comment}
                             </div>
                           )}
                         </div>

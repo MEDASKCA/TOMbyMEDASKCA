@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import TopBar from '@/components/navigation/TopBar';
 import DashboardView from '@/components/views/DashboardView';
+import TheatreScheduleView from '@/components/views/TheatreScheduleView';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -12,14 +13,7 @@ export default function Home() {
       case 'dashboard':
         return <DashboardView />;
       case 'schedule':
-        return (
-          <div className="flex items-center justify-center h-96">
-            <div className="text-center">
-              <h2 className="text-2xl font-semibold text-gray-700 mb-2">Theatre Schedule</h2>
-              <p className="text-gray-500">Schedule management coming soon</p>
-            </div>
-          </div>
-        );
+        return <TheatreScheduleView />;
       case 'roster':
         return (
           <div className="flex items-center justify-center h-96">
@@ -74,8 +68,8 @@ export default function Home() {
     <div className="min-h-screen bg-gray-100">
       <TopBar activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      <main className="container mx-auto px-4 py-6">
-        <div className="bg-white rounded-lg shadow-sm">
+      <main className={activeTab === 'schedule' ? '' : 'container mx-auto px-4 py-6'}>
+        <div className={activeTab === 'schedule' ? '' : 'bg-white rounded-lg shadow-sm'}>
           {renderContent()}
         </div>
       </main>

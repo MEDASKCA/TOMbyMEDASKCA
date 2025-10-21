@@ -66,9 +66,78 @@ export default function StaffCompetencyModal({ isOpen, onClose, staff }: StaffCo
 
   if (!isOpen) return null;
 
+  // Only show competency modal for Scrub N/P and Anaes N/P roles
+  const showCompetencies = staff.role.includes('Scrub') || staff.role.includes('Anaes N/P') || staff.role.includes('Anaesthetic Nurse');
+  const isAnaesNP = staff.role.includes('Anaes N/P') || staff.role.includes('Anaesthetic Nurse');
+
+  if (!showCompetencies) {
+    return null;
+  }
+
   // Mock comprehensive competency data - would come from database in production
   const getStaffData = (staffName: string) => {
-    const specialties: Specialty[] = [
+    // Anaesthetic N/P competencies - focused on anaesthetic skills
+    const anaestheticSpecialties: Specialty[] = [
+      {
+        id: 'general-anaes',
+        name: 'General Anaesthesia',
+        level: 'Expert',
+        certified: true,
+        lastAssessed: '2024-09-15',
+        procedureCount: 125
+      },
+      {
+        id: 'regional-anaes',
+        name: 'Regional Anaesthesia',
+        level: 'Expert',
+        certified: true,
+        lastAssessed: '2024-08-20',
+        procedureCount: 87
+      },
+      {
+        id: 'paed-anaes',
+        name: 'Paediatric Anaesthesia',
+        level: 'Competent',
+        certified: true,
+        lastAssessed: '2024-07-10',
+        procedureCount: 42
+      },
+      {
+        id: 'airway-mgmt',
+        name: 'Advanced Airway Management',
+        level: 'Expert',
+        certified: true,
+        lastAssessed: '2024-09-01',
+        procedureCount: 156
+      },
+      {
+        id: 'sedation',
+        name: 'Procedural Sedation',
+        level: 'Expert',
+        certified: true,
+        lastAssessed: '2024-08-15',
+        procedureCount: 93
+      },
+      {
+        id: 'cardiac-anaes',
+        name: 'Cardiac Anaesthesia',
+        level: 'Competent',
+        certified: false,
+        lastAssessed: '2024-06-01',
+        procedureCount: 18
+      },
+      {
+        id: 'neuro-anaes',
+        name: 'Neuroanaesthesia',
+        level: 'Learning',
+        certified: false,
+        lastAssessed: '2024-10-01',
+        procedureCount: 8
+      }
+    ];
+
+    // Scrub N/P competencies - focused on surgical specialties
+    const scrubSpecialties: Specialty[] = [
       {
         id: 'ortho-trauma',
         name: 'Orthopaedic Trauma',
@@ -119,7 +188,112 @@ export default function StaffCompetencyModal({ isOpen, onClose, staff }: StaffCo
       }
     ];
 
-    const procedures: Record<string, Procedure[]> = {
+    const specialties = isAnaesNP ? anaestheticSpecialties : scrubSpecialties;
+
+    // Anaesthetic procedures
+    const anaestheticProcedures: Record<string, Procedure[]> = {
+      'general-anaes': [
+        {
+          id: 'ga-intubation',
+          name: 'General Anaesthesia with Intubation',
+          specialtyId: 'general-anaes',
+          frequency: 'Daily',
+          lastPerformed: '2024-10-19',
+          totalPerformed: 456,
+          complexity: 'Intermediate'
+        },
+        {
+          id: 'ga-lma',
+          name: 'General Anaesthesia with LMA',
+          specialtyId: 'general-anaes',
+          frequency: 'Daily',
+          lastPerformed: '2024-10-19',
+          totalPerformed: 342,
+          complexity: 'Intermediate'
+        },
+        {
+          id: 'rapid-sequence',
+          name: 'Rapid Sequence Induction',
+          specialtyId: 'general-anaes',
+          frequency: 'Weekly',
+          lastPerformed: '2024-10-17',
+          totalPerformed: 89,
+          complexity: 'Advanced'
+        }
+      ],
+      'regional-anaes': [
+        {
+          id: 'spinal',
+          name: 'Spinal Anaesthesia',
+          specialtyId: 'regional-anaes',
+          frequency: 'Daily',
+          lastPerformed: '2024-10-18',
+          totalPerformed: 234,
+          complexity: 'Intermediate'
+        },
+        {
+          id: 'epidural',
+          name: 'Epidural Anaesthesia',
+          specialtyId: 'regional-anaes',
+          frequency: 'Weekly',
+          lastPerformed: '2024-10-15',
+          totalPerformed: 145,
+          complexity: 'Advanced'
+        },
+        {
+          id: 'nerve-block',
+          name: 'Peripheral Nerve Block',
+          specialtyId: 'regional-anaes',
+          frequency: 'Daily',
+          lastPerformed: '2024-10-19',
+          totalPerformed: 198,
+          complexity: 'Advanced'
+        }
+      ],
+      'airway-mgmt': [
+        {
+          id: 'difficult-airway',
+          name: 'Difficult Airway Management',
+          specialtyId: 'airway-mgmt',
+          frequency: 'Weekly',
+          lastPerformed: '2024-10-16',
+          totalPerformed: 67,
+          complexity: 'Expert'
+        },
+        {
+          id: 'fibreoptic',
+          name: 'Fibreoptic Intubation',
+          specialtyId: 'airway-mgmt',
+          frequency: 'Monthly',
+          lastPerformed: '2024-10-08',
+          totalPerformed: 34,
+          complexity: 'Expert'
+        }
+      ],
+      'sedation': [
+        {
+          id: 'conscious-sedation',
+          name: 'Conscious Sedation',
+          specialtyId: 'sedation',
+          frequency: 'Daily',
+          lastPerformed: '2024-10-19',
+          totalPerformed: 276,
+          complexity: 'Intermediate'
+        },
+        {
+          id: 'deep-sedation',
+          name: 'Deep Sedation',
+          specialtyId: 'sedation',
+          frequency: 'Weekly',
+          lastPerformed: '2024-10-17',
+          totalPerformed: 123,
+          complexity: 'Advanced'
+        }
+      ]
+    };
+
+    // Scrub procedures
+    const scrubProcedures: Record<string, Procedure[]> = {
       'ortho-trauma': [
         {
           id: 'tibial-nail',
@@ -313,6 +487,8 @@ export default function StaffCompetencyModal({ isOpen, onClose, staff }: StaffCo
         }
       ]
     };
+
+    const procedures = isAnaesNP ? anaestheticProcedures : scrubProcedures;
 
     return { specialties, procedures, systems };
   };
