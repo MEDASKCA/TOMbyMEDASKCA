@@ -28,6 +28,43 @@ interface StaffHoverCardProps {
 export default function StaffHoverCard({ staff, visible, position }: StaffHoverCardProps) {
   if (!visible) return null;
 
+  // Calculate smart positioning to keep card in viewport
+  const calculatePosition = () => {
+    if (!position) return { left: 0, top: 0 };
+
+    const cardWidth = 384; // w-96 = 384px
+    const cardMaxHeight = window.innerHeight * 0.8; // 80vh
+    const margin = 20; // spacing from edge
+
+    let left = position.x;
+    let top = position.y + 10; // 10px below cursor
+
+    // Check if card would go off right edge
+    if (left + cardWidth / 2 > window.innerWidth - margin) {
+      left = window.innerWidth - cardWidth - margin;
+    }
+
+    // Check if card would go off left edge
+    if (left - cardWidth / 2 < margin) {
+      left = cardWidth / 2 + margin;
+    }
+
+    // Check if card would go off bottom edge
+    if (top + cardMaxHeight > window.innerHeight - margin) {
+      // Position above cursor instead
+      top = position.y - cardMaxHeight - 10;
+
+      // If still off top, just position it with margin
+      if (top < margin) {
+        top = margin;
+      }
+    }
+
+    return { left, top };
+  };
+
+  const smartPosition = calculatePosition();
+
   // Determine role type
   const isConsultant = staff.role.includes('Consultant');
   const isAssistant = staff.role.includes('Assistant');
@@ -158,9 +195,9 @@ export default function StaffHoverCard({ staff, visible, position }: StaffHoverC
     <div
       className="fixed z-[60] bg-white rounded-lg shadow-2xl border border-gray-200 w-96 max-h-[80vh] overflow-y-auto p-4"
       style={{
-        left: position?.x || 0,
-        top: position?.y || 0,
-        transform: 'translate(-50%, 10px)'
+        left: `${smartPosition.left}px`,
+        top: `${smartPosition.top}px`,
+        transform: 'translate(-50%, 0)'
       }}
       onMouseEnter={(e) => e.stopPropagation()}
       onMouseLeave={(e) => e.stopPropagation()}

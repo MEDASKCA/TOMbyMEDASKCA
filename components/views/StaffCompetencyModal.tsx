@@ -14,7 +14,12 @@ import {
   Clock,
   TrendingUp,
   Calendar,
-  ChevronLeft
+  ChevronLeft,
+  User,
+  MapPin,
+  Coffee,
+  Shield,
+  Activity
 } from 'lucide-react';
 
 interface StaffCompetencyModalProps {
@@ -63,6 +68,8 @@ export default function StaffCompetencyModal({ isOpen, onClose, staff }: StaffCo
   const [viewMode, setViewMode] = useState<ViewMode>('specialties');
   const [selectedSpecialty, setSelectedSpecialty] = useState<Specialty | null>(null);
   const [selectedProcedure, setSelectedProcedure] = useState<Procedure | null>(null);
+  const [showSpecialtyDetail, setShowSpecialtyDetail] = useState(false);
+  const [selectedSpecialtyForDetail, setSelectedSpecialtyForDetail] = useState<any>(null);
 
   if (!isOpen) return null;
 
@@ -537,8 +544,10 @@ export default function StaffCompetencyModal({ isOpen, onClose, staff }: StaffCo
   };
 
   const handleSpecialtyClick = (specialty: Specialty) => {
+    setSelectedSpecialtyForDetail(specialty);
     setSelectedSpecialty(specialty);
     setViewMode('procedures');
+    setShowSpecialtyDetail(true);
   };
 
   const handleProcedureClick = (procedure: Procedure) => {
@@ -553,12 +562,54 @@ export default function StaffCompetencyModal({ isOpen, onClose, staff }: StaffCo
     } else if (viewMode === 'procedures') {
       setViewMode('specialties');
       setSelectedSpecialty(null);
+      setShowSpecialtyDetail(false);
+      setSelectedSpecialtyForDetail(null);
+    }
+  };
+
+  const handleBackToList = () => {
+    setShowSpecialtyDetail(false);
+    setSelectedSpecialtyForDetail(null);
+  };
+
+  // Get staff details for context menu (similar to StaffHoverCard)
+  const getStaffDetailsForContext = () => {
+    return {
+      employeeId: 'NHS-2847',
+      department: 'Anaesthetics',
+      grade: 'Band 6',
+      currentLocation: staff.theatre || 'Theatre 1 - Orthopaedics',
+      shiftStart: '07:00',
+      shiftEnd: '19:00',
+      breakStatus: {
+        taken: false,
+        lastBreak: '07:00',
+        nextDue: '11:00',
+        totalBreaks: '0/3'
+      },
+      todaysActivity: {
+        casesCompleted: 3,
+        reliefProvided: 1,
+        averageEfficiency: '94%',
+        overtime: '0 hrs'
+      }
+    };
+  };
+
+  const staffDetailsForContext = getStaffDetailsForContext();
+
+  const getCompetencyColor = (level: string) => {
+    switch (level) {
+      case 'Expert': return 'bg-green-100 text-green-700 border-green-300';
+      case 'Competent': return 'bg-blue-100 text-blue-700 border-blue-300';
+      case 'Learning': return 'bg-yellow-100 text-yellow-700 border-yellow-300';
+      default: return 'bg-gray-100 text-gray-700 border-gray-300';
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-5xl w-full max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center lg:p-4 z-50">
+      <div className="bg-white lg:rounded-lg shadow-xl max-w-5xl w-full h-full lg:max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white p-4">
           <div className="flex items-center justify-between">
@@ -594,8 +645,109 @@ export default function StaffCompetencyModal({ isOpen, onClose, staff }: StaffCo
           </div>
         )}
 
-        {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-140px)]">
+        {/* Content - 2-column layout on mobile */}
+        <div className="flex flex-1 overflow-hidden">
+          {/* Left Context Menu - Only on mobile, hidden when specialty detail is shown */}
+          <div className={`lg:hidden w-2/5 bg-gray-50 border-r border-gray-200 overflow-y-auto p-3 ${showSpecialtyDetail ? 'hidden' : 'block'}`}>
+            {/* Staff Header */}
+            <div className="border-b border-gray-200 pb-3 mb-3">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="font-bold text-gray-900 text-sm">{staff.name}</h3>
+                  <p className="text-xs text-gray-600">{staff.role}</p>
+                  <p className="text-xs text-gray-500 mt-1">ID: {staffDetailsForContext.employeeId}</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs text-gray-500">Shift</p>
+                  <p className="text-xs font-medium">{staffDetailsForContext.shiftStart} - {staffDetailsForContext.shiftEnd}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Location and Breaks */}
+            <div className="bg-white rounded-lg p-2 mb-3 border border-gray-200">
+              <div className="space-y-2 text-xs">
+                <div className="flex items-center space-x-1">
+                  <MapPin className="w-3 h-3 text-gray-400" />
+                  <span className="font-medium">Location:</span>
+                  <span className="text-gray-600 text-xs">{staffDetailsForContext.currentLocation}</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <Coffee className="w-3 h-3 text-gray-400" />
+                  <span className="font-medium">Breaks:</span>
+                  <span className={staffDetailsForContext.breakStatus.taken ? 'text-green-600' : 'text-orange-600'}>
+                    {staffDetailsForContext.breakStatus.totalBreaks}
+                  </span>
+                </div>
+              </div>
+              {!staffDetailsForContext.breakStatus.taken && (
+                <div className="mt-2 px-2 py-1 bg-yellow-100 text-yellow-700 rounded text-xs">
+                  Break overdue
+                </div>
+              )}
+            </div>
+
+            {/* Competencies Summary */}
+            <div className="mb-3">
+              <h4 className="text-xs font-semibold text-gray-700 mb-2 flex items-center">
+                <Award className="w-3 h-3 mr-1" />
+                Top Competencies
+              </h4>
+              <div className="space-y-1">
+                {specialties.filter(s => s.level === 'Expert').slice(0, 3).map((comp) => (
+                  <div
+                    key={comp.id}
+                    className={`flex items-center justify-between px-2 py-1 rounded border text-xs ${getCompetencyColor(comp.level)}`}
+                  >
+                    <span className="font-medium text-xs truncate">{comp.name}</span>
+                    <div className="flex items-center space-x-1">
+                      <span className="text-xs">{comp.level}</span>
+                      {comp.certified && <Shield className="w-3 h-3" />}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Today's Activity */}
+            <div className="bg-blue-50 rounded-lg p-2 border border-blue-200">
+              <h4 className="text-xs font-semibold text-blue-700 mb-1">Today&apos;s Activity</h4>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div>
+                  <span className="text-gray-600">Cases:</span>
+                  <span className="font-medium ml-1">{staffDetailsForContext.todaysActivity.casesCompleted}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">Reliefs:</span>
+                  <span className="font-medium ml-1">{staffDetailsForContext.todaysActivity.reliefProvided}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">Efficiency:</span>
+                  <span className="font-medium ml-1 text-green-600">{staffDetailsForContext.todaysActivity.averageEfficiency}</span>
+                </div>
+                <div>
+                  <span className="text-gray-600">Overtime:</span>
+                  <span className="font-medium ml-1">{staffDetailsForContext.todaysActivity.overtime}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Content Area */}
+          <div className={`flex-1 overflow-y-auto p-6 ${showSpecialtyDetail ? 'w-full' : 'lg:w-full'}`}>
+            {/* Back button for mobile specialty detail view */}
+            {showSpecialtyDetail && (
+              <div className="lg:hidden mb-4">
+                <button
+                  onClick={handleBackToList}
+                  className="flex items-center space-x-2 text-sm text-gray-600 hover:text-gray-900"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  <span>Back to List</span>
+                </button>
+              </div>
+            )}
+
           {/* Specialties View */}
           {viewMode === 'specialties' && (
             <>
@@ -801,6 +953,7 @@ export default function StaffCompetencyModal({ isOpen, onClose, staff }: StaffCo
               </div>
             </>
           )}
+          </div>
         </div>
 
         {/* Footer */}
