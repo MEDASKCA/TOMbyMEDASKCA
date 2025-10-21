@@ -41,6 +41,39 @@ export default function DashboardView() {
   const [showTurnoverModal, setShowTurnoverModal] = useState(false);
   const [showEfficiencyModal, setShowEfficiencyModal] = useState(false);
 
+  // Live clock state - synchronized with Theatre Schedule date (October 21, 2024)
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  // Update clock every second
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // Format date and time - using October 21, 2024 as the base date
+  const formatDateTime = () => {
+    const baseDate = new Date(2024, 9, 21); // October 21, 2024
+    const time = currentTime;
+
+    const dateStr = baseDate.toLocaleDateString('en-GB', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    const timeStr = time.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+
+    return { date: dateStr, time: timeStr };
+  };
+
   // Helper function to add professional titles to staff names
   const addStaffTitle = (name: string, role: string): string => {
     if (name === 'VACANT' || !name) return name;
@@ -858,9 +891,20 @@ export default function DashboardView() {
       <div className="mb-4 sm:mb-6">
         {/* Title */}
         <div className="mb-3 flex items-start justify-between">
-          <div>
+          <div className="flex-1">
             <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Operations Dashboard</h1>
             <p className="text-xs sm:text-sm text-gray-600 mt-1">Real-time theatre management and monitoring</p>
+            {/* Date and Time Display */}
+            <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:space-x-4 text-xs sm:text-sm">
+              <div className="flex items-center space-x-2 text-gray-700">
+                <Calendar className="w-4 h-4 text-blue-600" />
+                <span className="font-medium">{formatDateTime().date}</span>
+              </div>
+              <div className="flex items-center space-x-2 text-gray-700 mt-1 sm:mt-0">
+                <Clock className="w-4 h-4 text-blue-600" />
+                <span className="font-mono font-semibold">{formatDateTime().time}</span>
+              </div>
+            </div>
           </div>
           {/* Live Status Indicator */}
           <div className="flex items-center space-x-2 bg-green-500/20 px-2 sm:px-3 py-1 rounded-full flex-shrink-0">
