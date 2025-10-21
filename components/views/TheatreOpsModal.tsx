@@ -146,14 +146,12 @@ export default function TheatreOpsModal({ isOpen, onClose }: TheatreOpsModalProp
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-7xl w-full max-h-[90vh] overflow-hidden">
+      <div className="bg-white rounded-lg shadow-xl max-w-7xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 flex items-center justify-between">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-3 flex items-center justify-between flex-shrink-0">
           <div>
-            <h2 className="text-xl font-bold">Theatre Operations Summary</h2>
-            <p className="text-blue-100 text-sm mt-1">
-              Live operational status and issue tracking
-            </p>
+            <h2 className="text-lg font-bold">Theatre Operations Summary</h2>
+            <p className="text-blue-100 text-xs mt-1">Live operational status and issue tracking</p>
           </div>
           <button
             onClick={onClose}
@@ -163,75 +161,80 @@ export default function TheatreOpsModal({ isOpen, onClose }: TheatreOpsModalProp
           </button>
         </div>
 
-        {/* Summary Cards */}
-        <div className="p-6 bg-gray-50 border-b border-gray-200">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-            <div className="bg-white rounded-lg p-4 border border-gray-200">
-              <p className="text-xs text-gray-600 mb-1">Running Theatres</p>
-              <p className="text-2xl font-bold text-green-600">
-                {operationalSummary.runningTheatres}/{operationalSummary.totalTheatres}
-              </p>
-            </div>
-            <div className="bg-white rounded-lg p-4 border border-gray-200">
-              <p className="text-xs text-gray-600 mb-1">Cases Completed</p>
-              <p className="text-2xl font-bold text-blue-600">{operationalSummary.casesCompleted}</p>
-            </div>
-            <div className="bg-white rounded-lg p-4 border border-gray-200">
-              <p className="text-xs text-gray-600 mb-1">Cases Underway</p>
-              <p className="text-2xl font-bold text-orange-600">{operationalSummary.casesUnderway}</p>
-            </div>
-            <div className="bg-white rounded-lg p-4 border border-gray-200">
-              <p className="text-xs text-gray-600 mb-1">Total Scheduled</p>
-              <p className="text-2xl font-bold text-gray-700">{operationalSummary.casesScheduled}</p>
-            </div>
-            <div className="bg-white rounded-lg p-4 border border-gray-200">
-              <p className="text-xs text-gray-600 mb-1">Active Issues</p>
-              <p className="text-2xl font-bold text-red-600">{issues.filter(i => i.status !== 'resolved').length}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Filters */}
-        <div className="p-4 bg-white border-b border-gray-200">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Filter className="w-4 h-4 text-gray-500" />
-              <span className="text-sm font-medium text-gray-700">Filter by Type:</span>
-              {(['all', 'operational', 'clinical', 'escalation'] as const).map((filter) => (
-                <button
-                  key={filter}
-                  onClick={() => setSelectedFilter(filter)}
-                  className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                    selectedFilter === filter
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {filter.charAt(0).toUpperCase() + filter.slice(1)}
-                </button>
-              ))}
-            </div>
-            <div className="flex items-center space-x-2">
-              <Calendar className="w-4 h-4 text-gray-500" />
-              {(['today', 'week', 'month'] as const).map((period) => (
-                <button
-                  key={period}
-                  onClick={() => setSelectedPeriod(period)}
-                  className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                    selectedPeriod === period
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {period.charAt(0).toUpperCase() + period.slice(1)}
-                </button>
-              ))}
+        {/* Main Content Area - Flex Row */}
+        <div className="flex flex-1 overflow-hidden">
+          {/* Left Sidebar - Stats (Fixed, Compact) */}
+          <div className="w-48 bg-gray-50 border-r border-gray-200 p-3 flex-shrink-0 overflow-y-auto">
+            <div className="space-y-2">
+              <div className="bg-white rounded-lg p-2 border border-gray-200">
+                <p className="text-[10px] text-gray-600 mb-1">Running Theatres</p>
+                <p className="text-lg font-bold text-green-600">
+                  {operationalSummary.runningTheatres}/{operationalSummary.totalTheatres}
+                </p>
+              </div>
+              <div className="bg-white rounded-lg p-2 border border-gray-200">
+                <p className="text-[10px] text-gray-600 mb-1">Cases Completed</p>
+                <p className="text-lg font-bold text-blue-600">{operationalSummary.casesCompleted}</p>
+              </div>
+              <div className="bg-white rounded-lg p-2 border border-gray-200">
+                <p className="text-[10px] text-gray-600 mb-1">Cases Underway</p>
+                <p className="text-lg font-bold text-orange-600">{operationalSummary.casesUnderway}</p>
+              </div>
+              <div className="bg-white rounded-lg p-2 border border-gray-200">
+                <p className="text-[10px] text-gray-600 mb-1">Total Scheduled</p>
+                <p className="text-lg font-bold text-gray-700">{operationalSummary.casesScheduled}</p>
+              </div>
+              <div className="bg-white rounded-lg p-2 border border-gray-200">
+                <p className="text-[10px] text-gray-600 mb-1">Active Issues</p>
+                <p className="text-lg font-bold text-red-600">{issues.filter(i => i.status !== 'resolved').length}</p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Issues List */}
-        <div className="overflow-y-auto max-h-[calc(90vh-400px)] p-6">
+          {/* Right Content Area */}
+          <div className="flex-1 flex flex-col overflow-hidden">
+            {/* Filters - Compact, at top */}
+            <div className="p-2 bg-white border-b border-gray-200 flex-shrink-0">
+              <div className="flex flex-col space-y-2">
+                <div className="flex items-center space-x-2 flex-wrap">
+                  <Filter className="w-3 h-3 text-gray-500" />
+                  <span className="text-xs font-medium text-gray-700">Type:</span>
+                  {(['all', 'operational', 'clinical', 'escalation'] as const).map((filter) => (
+                    <button
+                      key={filter}
+                      onClick={() => setSelectedFilter(filter)}
+                      className={`px-2 py-1 rounded text-[10px] font-medium transition-colors ${
+                        selectedFilter === filter
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {filter.charAt(0).toUpperCase() + filter.slice(1)}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex items-center space-x-2 flex-wrap">
+                  <Calendar className="w-3 h-3 text-gray-500" />
+                  <span className="text-xs font-medium text-gray-700">Period:</span>
+                  {(['today', 'week', 'month'] as const).map((period) => (
+                    <button
+                      key={period}
+                      onClick={() => setSelectedPeriod(period)}
+                      className={`px-2 py-1 rounded text-[10px] font-medium transition-colors ${
+                        selectedPeriod === period
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {period.charAt(0).toUpperCase() + period.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Issues List - Scrollable */}
+            <div className="flex-1 overflow-y-auto p-3">
           <div className="space-y-3">
             {filteredIssues.map((issue) => (
               <div
@@ -318,6 +321,8 @@ export default function TheatreOpsModal({ isOpen, onClose }: TheatreOpsModalProp
                 )}
               </div>
             ))}
+          </div>
+            </div>
           </div>
         </div>
       </div>
