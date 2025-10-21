@@ -734,7 +734,7 @@ export default function StaffCompetencyModal({ isOpen, onClose, staff }: StaffCo
           </div>
 
           {/* Right Content Area */}
-          <div className={`flex-1 overflow-y-auto p-6 ${showSpecialtyDetail ? 'w-full' : 'lg:w-full'}`}>
+          <div className={`flex-1 overflow-y-auto p-6 ${showSpecialtyDetail ? 'w-full' : ''}`}>
             {/* Back button for mobile specialty detail view */}
             {showSpecialtyDetail && (
               <div className="lg:hidden mb-4">

@@ -28,39 +28,74 @@ interface StaffHoverCardProps {
 export default function StaffHoverCard({ staff, visible, position }: StaffHoverCardProps) {
   if (!visible) return null;
 
-  // Calculate smart positioning to keep card in viewport
+  // Calculate smart positioning based on cursor location
   const calculatePosition = () => {
-    if (!position) return { left: 0, top: 0 };
+    if (!position) return { left: 0, top: 0, transform: 'translate(-50%, 0)' };
 
     const cardWidth = 384; // w-96 = 384px
     const cardMaxHeight = window.innerHeight * 0.8; // 80vh
     const margin = 20; // spacing from edge
+    const cursorOffset = 15; // small gap from cursor
+
+    // Determine cursor position in viewport
+    const viewportHeight = window.innerHeight;
+    const viewportWidth = window.innerWidth;
+
+    // Vertical thirds: top, middle, bottom
+    const isTopThird = position.y < viewportHeight / 3;
+    const isBottomThird = position.y > (viewportHeight * 2) / 3;
+    const isMiddleVertical = !isTopThird && !isBottomThird;
+
+    // Horizontal halves: left, right
+    const isLeftHalf = position.x < viewportWidth / 2;
+    const isRightHalf = !isLeftHalf;
 
     let left = position.x;
-    let top = position.y + 10; // 10px below cursor
+    let top = position.y;
+    let transform = 'translate(-50%, 0)';
 
-    // Check if card would go off right edge
-    if (left + cardWidth / 2 > window.innerWidth - margin) {
-      left = window.innerWidth - cardWidth - margin;
+    // Horizontal positioning
+    if (isRightHalf) {
+      // Position to the left of cursor
+      left = position.x - cursorOffset;
+      transform = 'translate(-100%, 0)';
+    } else {
+      // Position to the right of cursor
+      left = position.x + cursorOffset;
+      transform = 'translate(0, 0)';
     }
 
-    // Check if card would go off left edge
-    if (left - cardWidth / 2 < margin) {
-      left = cardWidth / 2 + margin;
+    // Ensure card doesn't go off horizontal edges
+    if (left + cardWidth > viewportWidth - margin) {
+      left = viewportWidth - cardWidth - margin;
+      transform = 'translate(0, 0)';
+    }
+    if (left < margin) {
+      left = margin;
+      transform = 'translate(0, 0)';
     }
 
-    // Check if card would go off bottom edge
-    if (top + cardMaxHeight > window.innerHeight - margin) {
-      // Position above cursor instead
-      top = position.y - cardMaxHeight - 10;
-
-      // If still off top, just position it with margin
-      if (top < margin) {
-        top = margin;
-      }
+    // Vertical positioning
+    if (isBottomThird) {
+      // Position card higher, centered vertically around middle of screen
+      top = viewportHeight / 2 - cardMaxHeight / 2;
+    } else if (isMiddleVertical) {
+      // Center card vertically around cursor, slightly offset
+      top = position.y - cardMaxHeight / 2;
+    } else {
+      // Top third - position below cursor
+      top = position.y + cursorOffset;
     }
 
-    return { left, top };
+    // Ensure card doesn't go off vertical edges
+    if (top + cardMaxHeight > viewportHeight - margin) {
+      top = viewportHeight - cardMaxHeight - margin;
+    }
+    if (top < margin) {
+      top = margin;
+    }
+
+    return { left, top, transform };
   };
 
   const smartPosition = calculatePosition();
@@ -193,11 +228,11 @@ export default function StaffHoverCard({ staff, visible, position }: StaffHoverC
 
   return (
     <div
-      className="fixed z-[60] bg-white rounded-lg shadow-2xl border border-gray-200 w-96 max-h-[80vh] overflow-y-auto p-4"
+      className="hidden lg:fixed z-[60] bg-white rounded-lg shadow-2xl border border-gray-200 w-96 max-h-[80vh] overflow-y-auto p-4"
       style={{
         left: `${smartPosition.left}px`,
         top: `${smartPosition.top}px`,
-        transform: 'translate(-50%, 0)'
+        transform: smartPosition.transform
       }}
       onMouseEnter={(e) => e.stopPropagation()}
       onMouseLeave={(e) => e.stopPropagation()}
