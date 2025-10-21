@@ -163,7 +163,7 @@ export default function StaffDutyModal({ isOpen, onClose, onNavigateToRoster }: 
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center lg:p-4 z-50">
-      <div className="bg-white lg:rounded-lg shadow-xl max-w-7xl w-full h-full lg:max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="bg-white lg:rounded-lg shadow-xl max-w-[95vw] w-full h-full lg:max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-3 flex items-center justify-between flex-shrink-0">
           <div>

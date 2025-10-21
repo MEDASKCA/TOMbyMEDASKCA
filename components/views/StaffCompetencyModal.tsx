@@ -19,7 +19,8 @@ import {
   MapPin,
   Coffee,
   Shield,
-  Activity
+  Activity,
+  XCircle
 } from 'lucide-react';
 
 interface StaffCompetencyModalProps {
@@ -587,6 +588,13 @@ export default function StaffCompetencyModal({ isOpen, onClose, staff }: StaffCo
         nextDue: '11:00',
         totalBreaks: '0/3'
       },
+      canRelieveIn: [
+        { theatre: 'Theatre 1', available: true, reason: 'Primary theatre' },
+        { theatre: 'Theatre 2', available: true, reason: 'Competent in General' },
+        { theatre: 'Theatre 3', available: false, reason: 'Not certified for Cardiac' },
+        { theatre: 'Theatre 4', available: false, reason: 'Neuro - Learning only' },
+        { theatre: 'Theatre 5', available: true, reason: 'Emergency certified' }
+      ],
       todaysActivity: {
         casesCompleted: 3,
         reliefProvided: 1,
@@ -609,7 +617,7 @@ export default function StaffCompetencyModal({ isOpen, onClose, staff }: StaffCo
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center lg:p-4 z-50">
-      <div className="bg-white lg:rounded-lg shadow-xl max-w-5xl w-full h-full lg:max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="bg-white lg:rounded-lg shadow-xl max-w-[95vw] w-full h-full lg:max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white p-4">
           <div className="flex items-center justify-between">
@@ -704,6 +712,34 @@ export default function StaffCompetencyModal({ isOpen, onClose, staff }: StaffCo
                       <span className="text-xs">{comp.level}</span>
                       {comp.certified && <Shield className="w-3 h-3" />}
                     </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Relief Availability */}
+            <div className="mb-3">
+              <h4 className="text-xs font-semibold text-gray-700 mb-2 flex items-center">
+                <Activity className="w-3 h-3 mr-1" />
+                Can Relieve In:
+              </h4>
+              <div className="grid grid-cols-2 gap-1 text-xs">
+                {staffDetailsForContext.canRelieveIn.map((theatre: any, idx: number) => (
+                  <div
+                    key={idx}
+                    className={`flex items-center space-x-1 p-1 rounded ${
+                      theatre.available ? 'bg-green-50' : 'bg-gray-50'
+                    }`}
+                    title={theatre.reason}
+                  >
+                    {theatre.available ? (
+                      <CheckCircle className="w-3 h-3 text-green-600" />
+                    ) : (
+                      <XCircle className="w-3 h-3 text-gray-400" />
+                    )}
+                    <span className={theatre.available ? 'text-green-700 text-xs' : 'text-gray-500 text-xs'}>
+                      {theatre.theatre}
+                    </span>
                   </div>
                 ))}
               </div>
