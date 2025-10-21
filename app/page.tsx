@@ -65,20 +65,21 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 flex flex-col">
       <TopBar activeTab={activeTab} setActiveTab={setActiveTab} />
 
-      <main className={activeTab === 'schedule' ? '' : 'container mx-auto px-4 py-6'}>
-        <div className={activeTab === 'schedule' ? '' : 'bg-white rounded-lg shadow-sm'}>
+      <main className={activeTab === 'schedule' ? 'flex-1' : 'container mx-auto px-2 sm:px-4 py-3 sm:py-6 flex-1'}>
+        <div className={activeTab === 'schedule' ? '' : 'bg-white rounded-lg shadow-sm p-2 sm:p-4'}>
           {renderContent()}
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-800 text-white py-4 mt-auto">
-        <div className="container mx-auto px-4 text-center text-sm">
-          <p>© 2025 Theatre Operations Manager - Demo for NHS Clinical Entrepreneur Programme</p>
-          <p className="text-gray-400 mt-1">Version 1.0.0 | Secure Healthcare Platform</p>
+      <footer className="bg-gray-800 text-white py-3 sm:py-4 mt-auto">
+        <div className="container mx-auto px-2 sm:px-4 text-center text-xs sm:text-sm">
+          <p className="hidden sm:block">© 2025 Theatre Operations Manager - Demo for NHS Clinical Entrepreneur Programme</p>
+          <p className="sm:hidden">© 2025 TOM - NHS CEP Demo</p>
+          <p className="text-gray-400 mt-1 text-[10px] sm:text-xs">Version 1.0.0 | Secure Healthcare Platform</p>
         </div>
       </footer>
     </div>

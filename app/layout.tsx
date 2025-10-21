@@ -20,6 +20,13 @@ export const metadata: Metadata = {
   description: "Intelligent theatre operations management for NHS trusts - combining roster, inventory, and procedure management",
 };
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
