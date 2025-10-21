@@ -58,12 +58,6 @@ export default function TopBar({ activeTab, setActiveTab }: TopBarProps) {
 
           {/* Right side actions */}
           <div className="flex items-center space-x-1 sm:space-x-4">
-            {/* Live Status Indicator - Hidden on mobile */}
-            <div className="hidden md:flex items-center space-x-2 bg-green-500/20 px-3 py-1 rounded-full">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-sm">All Systems Operational</span>
-            </div>
-
             {/* Notifications */}
             <div className="relative">
               <button
@@ -113,11 +107,12 @@ export default function TopBar({ activeTab, setActiveTab }: TopBarProps) {
             {/* User Profile - Simplified on mobile */}
             <div className="flex items-center space-x-2 pl-2 sm:pl-4 border-l border-blue-600">
               <div className="text-right hidden md:block">
-                <p className="text-sm font-semibold">Theatre Manager</p>
+                <p className="text-sm font-semibold">Coco Martin</p>
+                <p className="text-xs text-blue-200">Theatre Manager</p>
                 <p className="text-xs text-blue-200">Royal London Hospital</p>
               </div>
               <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-600 rounded-full flex items-center justify-center text-xs sm:text-base">
-                TM
+                CM
               </div>
             </div>
           </div>

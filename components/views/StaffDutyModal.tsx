@@ -19,9 +19,10 @@ interface StaffDutyModalProps {
   isOpen: boolean;
   onClose: () => void;
   onNavigateToRoster?: () => void;
+  selectedUnit?: 'all' | 'main' | 'acad' | 'recovery';
 }
 
-export default function StaffDutyModal({ isOpen, onClose, onNavigateToRoster }: StaffDutyModalProps) {
+export default function StaffDutyModal({ isOpen, onClose, onNavigateToRoster, selectedUnit = 'all' }: StaffDutyModalProps) {
   const [showAvailableStaff, setShowAvailableStaff] = useState(false);
   const [selectedDate, setSelectedDate] = useState('today');
 
@@ -161,8 +162,36 @@ export default function StaffDutyModal({ isOpen, onClose, onNavigateToRoster }: 
     }
   ];
 
+  // Filter staff based on selected unit
+  const filteredSickStaff = sickStaff.filter(staff => {
+    if (selectedUnit === 'all') return true;
+    if (selectedUnit === 'recovery') return staff.department === 'Recovery';
+    if (selectedUnit === 'main') return staff.department === 'Main Theatres' || staff.department === 'Anaesthetics';
+    if (selectedUnit === 'acad') return staff.department === 'ACAD Theatres';
+    return true;
+  });
+
+  const filteredArrivingLate = arrivingLate.filter(staff => {
+    if (selectedUnit === 'all') return true;
+    if (selectedUnit === 'recovery') return staff.assignedTo?.includes('Recovery');
+    if (selectedUnit === 'main') return staff.assignedTo?.startsWith('Main Theatre');
+    if (selectedUnit === 'acad') return staff.assignedTo?.startsWith('ACAD Theatre');
+    return true;
+  });
+
+  const filteredVacantShifts = vacantShifts.map(dateGroup => ({
+    ...dateGroup,
+    shifts: dateGroup.shifts.filter(shift => {
+      if (selectedUnit === 'all') return true;
+      if (selectedUnit === 'recovery') return shift.department?.includes('Recovery');
+      if (selectedUnit === 'main') return shift.department?.startsWith('Main Theatre') || shift.department?.includes('Main Recovery');
+      if (selectedUnit === 'acad') return shift.department?.startsWith('ACAD Theatre');
+      return true;
+    })
+  })).filter(dateGroup => dateGroup.shifts.length > 0);
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center lg:p-4 z-50">
+    <div className="fixed inset-0 bg-gray-100 bg-opacity-95 flex items-center justify-center lg:p-4 z-50">
       <div className="bg-white lg:rounded-lg shadow-xl max-w-[95vw] w-full h-full lg:max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-3 flex items-center justify-between flex-shrink-0">
@@ -277,10 +306,10 @@ export default function StaffDutyModal({ isOpen, onClose, onNavigateToRoster }: 
                 <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
                   <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center">
                     <AlertTriangle className="w-4 h-4 mr-2 text-red-600" />
-                    Sickness Today ({sickStaff.length} staff)
+                    Sickness Today ({filteredSickStaff.length} staff)
                   </h3>
                   <div className="space-y-2">
-                    {sickStaff.map((staff, idx) => (
+                    {filteredSickStaff.map((staff, idx) => (
                       <div key={idx} className="bg-white rounded-lg p-3 border border-gray-200">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
@@ -339,10 +368,10 @@ export default function StaffDutyModal({ isOpen, onClose, onNavigateToRoster }: 
                 <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
                   <h3 className="text-sm font-semibold text-gray-900 mb-3 flex items-center">
                     <Clock className="w-4 h-4 mr-2 text-orange-600" />
-                    Arriving Late ({arrivingLate.length} staff)
+                    Arriving Late ({filteredArrivingLate.length} staff)
                   </h3>
                   <div className="space-y-2">
-                    {arrivingLate.map((staff, idx) => (
+                    {filteredArrivingLate.map((staff, idx) => (
                       <div key={idx} className="bg-orange-50 rounded-lg p-3 border border-orange-200">
                         <div className="flex items-center justify-between mb-2">
                           <h4 className="font-semibold text-gray-900 text-sm">{staff.name} - {staff.role}</h4>
@@ -380,7 +409,7 @@ export default function StaffDutyModal({ isOpen, onClose, onNavigateToRoster }: 
                     Vacant Shifts - Next 7 Days
                   </h3>
                   <div className="space-y-2">
-                    {vacantShifts.map((day, idx) => (
+                    {filteredVacantShifts.map((day, idx) => (
                       <div key={idx} className="bg-purple-50 rounded-lg p-3 border border-purple-200">
                         <h4 className="font-semibold text-purple-900 mb-2 text-sm">{day.date}</h4>
                         <div className="space-y-2">

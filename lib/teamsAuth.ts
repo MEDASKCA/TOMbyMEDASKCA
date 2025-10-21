@@ -41,7 +41,13 @@ let msalInstance: PublicClientApplication | null = null;
 
 export const getMsalInstance = () => {
   if (!msalInstance && typeof window !== 'undefined') {
-    msalInstance = new PublicClientApplication(msalConfig);
+    try {
+      msalInstance = new PublicClientApplication(msalConfig);
+    } catch (error) {
+      console.warn('MSAL initialization failed:', error);
+      // Return null if crypto is not available (e.g., in development or certain browsers)
+      return null;
+    }
   }
   return msalInstance;
 };

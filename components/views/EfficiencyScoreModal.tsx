@@ -278,7 +278,7 @@ export default function EfficiencyScoreModal({ isOpen, onClose }: EfficiencyScor
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center lg:p-4 z-50">
+    <div className="fixed inset-0 bg-gray-100 bg-opacity-95 flex items-center justify-center lg:p-4 z-50">
       <div className="bg-white lg:rounded-lg shadow-xl max-w-[95vw] w-full h-full lg:max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="bg-gradient-to-r from-orange-600 to-orange-700 text-white p-3 flex items-center justify-between flex-shrink-0">

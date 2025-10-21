@@ -792,14 +792,81 @@ export default function DashboardView() {
     return false;
   });
 
+  // Calculate KPI metrics based on selected unit
+  const getTheatreStats = () => {
+    if (selectedUnit === 'recovery') {
+      return { running: 0, total: 0 };
+    }
+    const running = filteredTheatres.filter(t => t.status !== 'closed').length;
+    const total = filteredTheatres.length;
+    return { running, total };
+  };
+
+  const getStaffCount = () => {
+    if (selectedUnit === 'recovery') {
+      // Count recovery staff (for now return 0, will be updated when recovery staff data is added)
+      return 0;
+    }
+
+    let staffCount = 0;
+    filteredTheatres.forEach(theatre => {
+      Object.values(theatre.team).forEach(staff => {
+        if (staff && staff.name && staff.name !== 'VACANT') {
+          staffCount++;
+        }
+      });
+    });
+    return staffCount;
+  };
+
+  const getStaffOnBreak = () => {
+    if (selectedUnit === 'recovery') return 0;
+
+    let onBreakCount = 0;
+    filteredTheatres.forEach(theatre => {
+      Object.values(theatre.team).forEach(staff => {
+        if (staff && staff.name && staff.name.includes('☕')) {
+          onBreakCount++;
+        }
+      });
+    });
+    return onBreakCount;
+  };
+
+  const getStaffDelayed = () => {
+    if (selectedUnit === 'recovery') return 0;
+
+    let delayedCount = 0;
+    filteredTheatres.forEach(theatre => {
+      Object.values(theatre.team).forEach(staff => {
+        if (staff && staff.name && staff.name.includes('⚠️')) {
+          delayedCount++;
+        }
+      });
+    });
+    return delayedCount;
+  };
+
+  const theatreStats = getTheatreStats();
+  const staffCount = getStaffCount();
+  const staffOnBreak = getStaffOnBreak();
+  const staffDelayed = getStaffDelayed();
+
   return (
     <div className="p-2 sm:p-6">
       {/* Page Header */}
       <div className="mb-4 sm:mb-6">
         {/* Title */}
-        <div className="mb-3">
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Operations Dashboard</h1>
-          <p className="text-xs sm:text-sm text-gray-600 mt-1">Real-time theatre management and monitoring</p>
+        <div className="mb-3 flex items-start justify-between">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Operations Dashboard</h1>
+            <p className="text-xs sm:text-sm text-gray-600 mt-1">Real-time theatre management and monitoring</p>
+          </div>
+          {/* Live Status Indicator */}
+          <div className="flex items-center space-x-2 bg-green-500/20 px-2 sm:px-3 py-1 rounded-full flex-shrink-0">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <span className="text-[10px] sm:text-sm text-green-700 font-medium">All Systems Operational</span>
+          </div>
         </div>
 
         {/* Unit Filter Buttons - Stack on mobile, inline on desktop */}
@@ -862,9 +929,21 @@ export default function DashboardView() {
             <Activity className="w-8 h-8 text-blue-600 group-hover:scale-110 transition-transform" />
             <span className="text-xs bg-blue-600 text-white px-2 py-1 rounded font-medium">Live</span>
           </div>
-          <h3 className="text-2xl font-bold text-gray-900">24/26</h3>
+          <h3 className="text-2xl font-bold text-gray-900">
+            {selectedUnit === 'recovery' ? 'N/A' : `${theatreStats.running}/${theatreStats.total}`}
+          </h3>
           <p className="text-sm text-gray-700 font-medium">Theatres Operational</p>
-          <p className="text-xs text-orange-600 mt-2 font-medium">⚠ 2 theatres closed</p>
+          {selectedUnit !== 'recovery' && theatreStats.total - theatreStats.running > 0 && (
+            <p className="text-xs text-orange-600 mt-2 font-medium">
+              ⚠ {theatreStats.total - theatreStats.running} theatre{theatreStats.total - theatreStats.running > 1 ? 's' : ''} closed
+            </p>
+          )}
+          {selectedUnit !== 'recovery' && theatreStats.total - theatreStats.running === 0 && (
+            <p className="text-xs text-green-600 mt-2 font-medium">✓ All theatres operational</p>
+          )}
+          {selectedUnit === 'recovery' && (
+            <p className="text-xs text-gray-500 mt-2 font-medium">Recovery areas active</p>
+          )}
           <p className="text-xs text-blue-600 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click for details →</p>
         </div>
 
@@ -875,11 +954,25 @@ export default function DashboardView() {
         >
           <div className="flex items-center justify-between mb-2">
             <Users className="w-8 h-8 text-green-600 group-hover:scale-110 transition-transform" />
-            <span className="text-xs bg-green-600 text-white px-2 py-1 rounded font-medium">Optimal</span>
+            <span className="text-xs bg-green-600 text-white px-2 py-1 rounded font-medium">
+              {selectedUnit === 'recovery' ? 'Recovery' : 'Optimal'}
+            </span>
           </div>
-          <h3 className="text-2xl font-bold text-gray-900">156</h3>
+          <h3 className="text-2xl font-bold text-gray-900">{staffCount}</h3>
           <p className="text-sm text-gray-700 font-medium">Staff On Duty</p>
-          <p className="text-xs text-orange-600 mt-2 font-medium">7 on break • 3 arriving late</p>
+          {selectedUnit !== 'recovery' && (staffOnBreak > 0 || staffDelayed > 0) && (
+            <p className="text-xs text-orange-600 mt-2 font-medium">
+              {staffOnBreak > 0 && `${staffOnBreak} on break`}
+              {staffOnBreak > 0 && staffDelayed > 0 && ' • '}
+              {staffDelayed > 0 && `${staffDelayed} delayed`}
+            </p>
+          )}
+          {selectedUnit !== 'recovery' && staffOnBreak === 0 && staffDelayed === 0 && staffCount > 0 && (
+            <p className="text-xs text-green-600 mt-2 font-medium">✓ All staff active</p>
+          )}
+          {selectedUnit === 'recovery' && staffCount === 0 && (
+            <p className="text-xs text-gray-500 mt-2 font-medium">Recovery staff tracking</p>
+          )}
           <p className="text-xs text-green-600 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click for details →</p>
         </div>
 
@@ -1036,7 +1129,6 @@ export default function DashboardView() {
                                   }}
                                   onMouseEnter={(e) => handleStaffHover(e, staff.name.replace(/[☕⚠️]/g, '').trim(), staff.role)}
                                   onMouseLeave={() => setHoveredStaff(null)}
-                                  title={`${addStaffTitle(staff.name, staff.role)}${staff.shift ? ` (${staff.shift})` : ''}`}
                                 >
                                   {addStaffTitle(staff.name.replace(/[☕⚠️]/g, '').trim(), staff.role)}
                                 </span>
@@ -1372,6 +1464,7 @@ export default function DashboardView() {
       <TheatreOpsModal
         isOpen={showTheatreOpsModal}
         onClose={() => setShowTheatreOpsModal(false)}
+        selectedUnit={selectedUnit}
       />
 
       {/* Staff Duty Modal */}
@@ -1383,6 +1476,7 @@ export default function DashboardView() {
           setShowStaffDutyModal(false);
           console.log('Navigate to Staff Roster tab');
         }}
+        selectedUnit={selectedUnit}
       />
 
       {/* Turnover Time Modal */}

@@ -16,12 +16,13 @@ import {
 interface TheatreOpsModalProps {
   isOpen: boolean;
   onClose: () => void;
+  selectedUnit?: 'all' | 'main' | 'acad' | 'recovery';
 }
 
 type IssueType = 'operational' | 'clinical' | 'escalation';
 type FilterPeriod = 'today' | 'week' | 'month';
 
-export default function TheatreOpsModal({ isOpen, onClose }: TheatreOpsModalProps) {
+export default function TheatreOpsModal({ isOpen, onClose, selectedUnit = 'all' }: TheatreOpsModalProps) {
   const [selectedFilter, setSelectedFilter] = useState<IssueType | 'all'>('all');
   const [selectedPeriod, setSelectedPeriod] = useState<FilterPeriod>('today');
   const [selectedIssue, setSelectedIssue] = useState<any>(null);
@@ -121,8 +122,16 @@ export default function TheatreOpsModal({ isOpen, onClose }: TheatreOpsModalProp
   ];
 
   const filteredIssues = issues.filter(issue => {
-    if (selectedFilter === 'all') return true;
-    return issue.type === selectedFilter;
+    // First filter by type
+    if (selectedFilter !== 'all' && issue.type !== selectedFilter) return false;
+
+    // Then filter by unit
+    if (selectedUnit === 'all') return true;
+    if (selectedUnit === 'recovery') return false; // No operational issues in recovery view
+    if (selectedUnit === 'main') return issue.theatre.startsWith('Main Theatre');
+    if (selectedUnit === 'acad') return issue.theatre.startsWith('ACAD Theatre');
+
+    return true;
   });
 
   const getStatusColor = (status: string) => {
@@ -145,7 +154,7 @@ export default function TheatreOpsModal({ isOpen, onClose }: TheatreOpsModalProp
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center lg:p-4 z-50">
+    <div className="fixed inset-0 bg-gray-100 bg-opacity-95 flex items-center justify-center lg:p-4 z-50">
       <div className="bg-white lg:rounded-lg shadow-xl max-w-[95vw] w-full h-full lg:max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-3 flex items-center justify-between flex-shrink-0">

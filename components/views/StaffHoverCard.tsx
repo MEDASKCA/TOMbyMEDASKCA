@@ -228,7 +228,7 @@ export default function StaffHoverCard({ staff, visible, position }: StaffHoverC
 
   return (
     <div
-      className="hidden lg:fixed z-[60] bg-white rounded-lg shadow-2xl border border-gray-200 w-96 max-h-[80vh] overflow-y-auto p-4"
+      className="hidden lg:block lg:fixed z-[60] bg-white rounded-lg shadow-2xl border border-gray-200 w-96 max-h-[80vh] overflow-y-auto p-4"
       style={{
         left: `${smartPosition.left}px`,
         top: `${smartPosition.top}px`,
