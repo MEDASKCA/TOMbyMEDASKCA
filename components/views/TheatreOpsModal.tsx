@@ -75,9 +75,9 @@ export default function TheatreOpsModal({ isOpen, onClose, selectedUnit = 'all' 
     {
       id: 3,
       type: 'clinical' as IssueType,
-      title: 'ACAD Theatre 3 - Delayed Start',
+      title: 'DSU Theatre 3 - Delayed Start',
       description: 'Patient arrived with elevated blood pressure',
-      theatre: 'ACAD Theatre 3',
+      theatre: 'DSU Theatre 3',
       raisedBy: 'Dr. F. James (Anaesthetist)',
       raisedAt: '08:45',
       status: 'resolved',
@@ -129,7 +129,7 @@ export default function TheatreOpsModal({ isOpen, onClose, selectedUnit = 'all' 
     if (selectedUnit === 'all') return true;
     if (selectedUnit === 'recovery') return false; // No operational issues in recovery view
     if (selectedUnit === 'main') return issue.theatre.startsWith('Main Theatre');
-    if (selectedUnit === 'acad') return issue.theatre.startsWith('ACAD Theatre');
+    if (selectedUnit === 'acad') return issue.theatre.startsWith('DSU Theatre');
 
     return true;
   });

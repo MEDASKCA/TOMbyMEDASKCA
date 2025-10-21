@@ -253,11 +253,11 @@ export function generateMonthSchedule(): ScheduledCase[] {
     { name: 'Main Theatre 10', specialty: 'Plastic Surgery' },
     { name: 'Main Theatre 11', specialty: 'Vascular' },
     { name: 'Main Theatre 12', specialty: 'Thoracic' },
-    { name: 'ACAD Theatre 1', specialty: 'Paediatric' },
-    { name: 'ACAD Theatre 2', specialty: 'Dental' },
-    { name: 'ACAD Theatre 3', specialty: 'Maxillofacial' },
-    { name: 'ACAD Theatre 4', specialty: 'General Surgery' },
-    { name: 'ACAD Theatre 7', specialty: 'Urology' },
+    { name: 'DSU Theatre 1', specialty: 'Paediatric' },
+    { name: 'DSU Theatre 2', specialty: 'Dental' },
+    { name: 'DSU Theatre 3', specialty: 'Maxillofacial' },
+    { name: 'DSU Theatre 4', specialty: 'General Surgery' },
+    { name: 'DSU Theatre 7', specialty: 'Urology' },
   ];
 
   let caseId = 1;

@@ -144,7 +144,7 @@ export default function TurnoverTimeModal({ isOpen, onClose }: TurnoverTimeModal
       nextCase: '13:10'
     },
     {
-      theatre: 'ACAD Theatre 1',
+      theatre: 'DSU Theatre 1',
       unit: 'acad',
       currentTurnover: 20,
       avgTurnover: 19,
@@ -158,7 +158,7 @@ export default function TurnoverTimeModal({ isOpen, onClose }: TurnoverTimeModal
       nextCase: '11:50'
     },
     {
-      theatre: 'ACAD Theatre 2',
+      theatre: 'DSU Theatre 2',
       unit: 'acad',
       currentTurnover: 21,
       avgTurnover: 20,
@@ -174,7 +174,7 @@ export default function TurnoverTimeModal({ isOpen, onClose }: TurnoverTimeModal
       nextCase: '09:45'
     },
     {
-      theatre: 'ACAD Theatre 3',
+      theatre: 'DSU Theatre 3',
       unit: 'acad',
       currentTurnover: 18,
       avgTurnover: 17,

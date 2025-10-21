@@ -368,7 +368,7 @@ export default function DashboardView() {
       }
     },
     {
-      theatre: 'ACAD Theatre 1',
+      theatre: 'DSU Theatre 1',
       specialty: 'Paediatric Day Surgery',
       session: '08:00 - 17:00',
       sessionsCount: 2,
@@ -389,7 +389,7 @@ export default function DashboardView() {
       }
     },
     {
-      theatre: 'ACAD Theatre 2',
+      theatre: 'DSU Theatre 2',
       specialty: 'Dental Day Surgery',
       session: '08:00 - 17:00',
       sessionsCount: 2,
@@ -408,7 +408,7 @@ export default function DashboardView() {
       }
     },
     {
-      theatre: 'ACAD Theatre 3',
+      theatre: 'DSU Theatre 3',
       specialty: 'Maxillofacial Day',
       session: '08:00 - 17:00',
       sessionsCount: 2,
@@ -429,7 +429,7 @@ export default function DashboardView() {
       alerts: 'Y. Reynolds delayed'
     },
     {
-      theatre: 'ACAD Theatre 4',
+      theatre: 'DSU Theatre 4',
       specialty: 'General Day Surgery',
       session: '08:00 - 17:00',
       sessionsCount: 3,
@@ -450,7 +450,7 @@ export default function DashboardView() {
       }
     },
     {
-      theatre: 'ACAD Theatre 5',
+      theatre: 'DSU Theatre 5',
       specialty: 'HPB Day Surgery',
       session: '08:00 - 17:00',
       sessionsCount: 2,
@@ -471,7 +471,7 @@ export default function DashboardView() {
       }
     },
     {
-      theatre: 'ACAD Theatre 6',
+      theatre: 'DSU Theatre 6',
       specialty: 'Complex Day Surgery',
       session: '08:00 - 17:00',
       sessionsCount: 2,
@@ -493,7 +493,7 @@ export default function DashboardView() {
       }
     },
     {
-      theatre: 'ACAD Theatre 7',
+      theatre: 'DSU Theatre 7',
       specialty: 'Robotic Day Surgery',
       session: '08:00 - 17:00',
       sessionsCount: 2,
@@ -514,7 +514,7 @@ export default function DashboardView() {
       }
     },
     {
-      theatre: 'ACAD Theatre 8',
+      theatre: 'DSU Theatre 8',
       specialty: 'Hybrid Procedures',
       session: '08:00 - 17:00',
       sessionsCount: 2,
@@ -535,7 +535,7 @@ export default function DashboardView() {
       alerts: 'H. Newman on break'
     },
     {
-      theatre: 'ACAD Theatre 9',
+      theatre: 'DSU Theatre 9',
       specialty: 'Spinal Day Surgery',
       session: '08:00 - 17:00',
       sessionsCount: 2,
@@ -556,7 +556,7 @@ export default function DashboardView() {
       }
     },
     {
-      theatre: 'ACAD Theatre 10',
+      theatre: 'DSU Theatre 10',
       specialty: 'Hand Surgery',
       session: '08:00 - 17:00',
       sessionsCount: 3,
@@ -576,7 +576,7 @@ export default function DashboardView() {
       }
     },
     {
-      theatre: 'ACAD Theatre 11',
+      theatre: 'DSU Theatre 11',
       specialty: 'Breast Surgery',
       session: '08:00 - 17:00',
       sessionsCount: 2,
@@ -596,7 +596,7 @@ export default function DashboardView() {
       }
     },
     {
-      theatre: 'ACAD Theatre 12',
+      theatre: 'DSU Theatre 12',
       specialty: 'Bariatric Day Surgery',
       session: '08:00 - 17:00',
       sessionsCount: 2,
@@ -618,7 +618,7 @@ export default function DashboardView() {
       alerts: 'Awaiting special equipment'
     },
     {
-      theatre: 'ACAD Theatre 13',
+      theatre: 'DSU Theatre 13',
       specialty: 'Minor Procedures',
       session: '08:00 - 17:00',
       sessionsCount: 3,
@@ -639,7 +639,7 @@ export default function DashboardView() {
       alerts: 'L. Dixon break overdue'
     },
     {
-      theatre: 'ACAD Theatre 14',
+      theatre: 'DSU Theatre 14',
       specialty: 'Endoscopy',
       session: '08:00 - 17:00',
       sessionsCount: 4,
@@ -723,7 +723,7 @@ export default function DashboardView() {
         bayNumber: 1,
         occupied: true,
         patientArrivalTime: '09:30',
-        fromTheatre: 'ACAD Theatre 1',
+        fromTheatre: 'DSU Theatre 1',
         specialty: 'Paediatric Day Surgery',
         procedure: 'Hernia Repair',
         dischargeWard: 'Paediatric Ward',
@@ -739,7 +739,7 @@ export default function DashboardView() {
         bayNumber: 3,
         occupied: true,
         patientArrivalTime: '09:00',
-        fromTheatre: 'ACAD Theatre 4',
+        fromTheatre: 'DSU Theatre 4',
         specialty: 'General Day Surgery',
         procedure: 'Laparoscopic Cholecystectomy',
         dischargeWard: 'Discharge Lounge',
@@ -768,27 +768,27 @@ export default function DashboardView() {
     'Main Theatre 10': '2410',
     'Main Theatre 11': '2411',
     'Main Theatre 12': '2412',
-    'ACAD Theatre 1': '2421',
-    'ACAD Theatre 2': '2422',
-    'ACAD Theatre 3': '2423',
-    'ACAD Theatre 4': '2424',
-    'ACAD Theatre 5': '2425',
-    'ACAD Theatre 6': '2426',
-    'ACAD Theatre 7': '2427',
-    'ACAD Theatre 8': '2428',
-    'ACAD Theatre 9': '2429',
-    'ACAD Theatre 10': '2430',
-    'ACAD Theatre 11': '2431',
-    'ACAD Theatre 12': '2432',
-    'ACAD Theatre 13': '2433',
-    'ACAD Theatre 14': '2434',
+    'DSU Theatre 1': '2421',
+    'DSU Theatre 2': '2422',
+    'DSU Theatre 3': '2423',
+    'DSU Theatre 4': '2424',
+    'DSU Theatre 5': '2425',
+    'DSU Theatre 6': '2426',
+    'DSU Theatre 7': '2427',
+    'DSU Theatre 8': '2428',
+    'DSU Theatre 9': '2429',
+    'DSU Theatre 10': '2430',
+    'DSU Theatre 11': '2431',
+    'DSU Theatre 12': '2432',
+    'DSU Theatre 13': '2433',
+    'DSU Theatre 14': '2434',
   };
 
   // Filter theatres based on selected unit
   const filteredTheatres = theatreAllocations.filter(theatre => {
     if (selectedUnit === 'all') return true;
     if (selectedUnit === 'main') return theatre.theatre.startsWith('Main Theatre');
-    if (selectedUnit === 'acad') return theatre.theatre.startsWith('ACAD Theatre');
+    if (selectedUnit === 'acad') return theatre.theatre.startsWith('DSU Theatre');
     return false;
   });
 
@@ -901,8 +901,8 @@ export default function DashboardView() {
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            <span className="sm:hidden">ACAD</span>
-            <span className="hidden sm:inline">ACAD Theatres</span>
+            <span className="sm:hidden">DSU</span>
+            <span className="hidden sm:inline">DSU Theatres</span>
           </button>
           <button
             onClick={() => setSelectedUnit('recovery')}
@@ -1026,8 +1026,8 @@ export default function DashboardView() {
             )}
             {selectedUnit === 'acad' && (
               <>
-                <span className="lg:hidden">ACAD Theatres</span>
-                <span className="hidden lg:inline">ACAD Theatres Operations</span>
+                <span className="lg:hidden">DSU Theatres</span>
+                <span className="hidden lg:inline">DSU Theatres Operations</span>
               </>
             )}
           </h2>
@@ -1248,11 +1248,11 @@ export default function DashboardView() {
             </div>
           </div>
 
-          {/* ACAD Recovery */}
+          {/* DSU Recovery */}
           <div className="bg-white border border-gray-200 rounded-lg p-5">
             <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
               <Activity className="w-5 h-5 mr-2 text-green-600" />
-              ACAD Theatres Recovery ({recoveryBays.acad.filter(b => b.occupied).length}/{recoveryBays.acad.length} Bays Occupied)
+              DSU Theatres Recovery ({recoveryBays.acad.filter(b => b.occupied).length}/{recoveryBays.acad.length} Bays Occupied)
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
               {recoveryBays.acad.map((bay) => (

@@ -67,11 +67,11 @@ export default function TheatreScheduleView() {
     'Main Theatre 10',
     'Main Theatre 11',
     'Main Theatre 12',
-    'ACAD Theatre 1',
-    'ACAD Theatre 2',
-    'ACAD Theatre 3',
-    'ACAD Theatre 4',
-    'ACAD Theatre 7'
+    'DSU Theatre 1',
+    'DSU Theatre 2',
+    'DSU Theatre 3',
+    'DSU Theatre 4',
+    'DSU Theatre 7'
   ];
 
   // Use centralized mock data from lib/mockData.ts

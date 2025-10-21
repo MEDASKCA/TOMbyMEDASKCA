@@ -56,7 +56,7 @@ export default function StaffDutyModal({ isOpen, onClose, onNavigateToRoster, se
     {
       name: 'ODP M. Johnson',
       role: 'Anaes N/P',
-      department: 'ACAD Theatres',
+      department: 'DSU Theatres',
       reason: 'Migraine',
       startDate: '2024-10-21',
       expectedReturn: '2024-10-21',
@@ -64,7 +64,7 @@ export default function StaffDutyModal({ isOpen, onClose, onNavigateToRoster, se
       lastSickness: '2024-08-10 - Stomach bug (2 days)',
       status: 'covered',
       coverBy: 'ODP R. Thompson (Internal)',
-      shiftsCovered: ['ACAD Theatre 5: 07:00-15:00']
+      shiftsCovered: ['DSU Theatre 5: 07:00-15:00']
     },
     {
       name: 'Dr. A. Patel',
@@ -77,7 +77,7 @@ export default function StaffDutyModal({ isOpen, onClose, onNavigateToRoster, se
       lastSickness: 'None this year',
       status: 'covered',
       coverBy: 'Dr. S. Kumar (Locum)',
-      shiftsCovered: ['Main Theatre 6: 08:00-18:00', 'ACAD Theatre 2: 08:00-18:00']
+      shiftsCovered: ['Main Theatre 6: 08:00-18:00', 'DSU Theatre 2: 08:00-18:00']
     },
     {
       name: 'HCA T. Brown',
@@ -129,7 +129,7 @@ export default function StaffDutyModal({ isOpen, onClose, onNavigateToRoster, se
     {
       name: 'RN L. Anderson',
       role: 'Scrub N/P',
-      assignedTo: 'ACAD Theatre 8',
+      assignedTo: 'DSU Theatre 8',
       scheduledStart: '07:00',
       expectedArrival: '07:45',
       reason: 'Childcare issue',
@@ -143,14 +143,14 @@ export default function StaffDutyModal({ isOpen, onClose, onNavigateToRoster, se
       date: 'Tomorrow (22 Oct)',
       shifts: [
         { role: 'Anaes N/P', department: 'Main Theatre 5', time: '08:00-18:00', priority: 'urgent', availableCover: 3 },
-        { role: 'Scrub N/P', department: 'ACAD Theatre 3', time: '12:00-20:00', priority: 'high', availableCover: 5 }
+        { role: 'Scrub N/P', department: 'DSU Theatre 3', time: '12:00-20:00', priority: 'high', availableCover: 5 }
       ]
     },
     {
       date: '23 Oct',
       shifts: [
         { role: 'HCA', department: 'Main Theatre 1', time: '08:00-16:00', priority: 'medium', availableCover: 8 },
-        { role: 'Anaes N/P', department: 'ACAD Theatre 7', time: '07:00-15:00', priority: 'high', availableCover: 2 }
+        { role: 'Anaes N/P', department: 'DSU Theatre 7', time: '07:00-15:00', priority: 'high', availableCover: 2 }
       ]
     },
     {
@@ -167,7 +167,7 @@ export default function StaffDutyModal({ isOpen, onClose, onNavigateToRoster, se
     if (selectedUnit === 'all') return true;
     if (selectedUnit === 'recovery') return staff.department === 'Recovery';
     if (selectedUnit === 'main') return staff.department === 'Main Theatres' || staff.department === 'Anaesthetics';
-    if (selectedUnit === 'acad') return staff.department === 'ACAD Theatres';
+    if (selectedUnit === 'acad') return staff.department === 'DSU Theatres';
     return true;
   });
 
@@ -175,7 +175,7 @@ export default function StaffDutyModal({ isOpen, onClose, onNavigateToRoster, se
     if (selectedUnit === 'all') return true;
     if (selectedUnit === 'recovery') return staff.assignedTo?.includes('Recovery');
     if (selectedUnit === 'main') return staff.assignedTo?.startsWith('Main Theatre');
-    if (selectedUnit === 'acad') return staff.assignedTo?.startsWith('ACAD Theatre');
+    if (selectedUnit === 'acad') return staff.assignedTo?.startsWith('DSU Theatre');
     return true;
   });
 
@@ -185,7 +185,7 @@ export default function StaffDutyModal({ isOpen, onClose, onNavigateToRoster, se
       if (selectedUnit === 'all') return true;
       if (selectedUnit === 'recovery') return shift.department?.includes('Recovery');
       if (selectedUnit === 'main') return shift.department?.startsWith('Main Theatre') || shift.department?.includes('Main Recovery');
-      if (selectedUnit === 'acad') return shift.department?.startsWith('ACAD Theatre');
+      if (selectedUnit === 'acad') return shift.department?.startsWith('DSU Theatre');
       return true;
     })
   })).filter(dateGroup => dateGroup.shifts.length > 0);

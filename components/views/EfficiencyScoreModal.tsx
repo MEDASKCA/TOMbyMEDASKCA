@@ -178,7 +178,7 @@ export default function EfficiencyScoreModal({ isOpen, onClose }: EfficiencyScor
       ]
     },
     {
-      theatre: 'ACAD Theatre 1',
+      theatre: 'DSU Theatre 1',
       unit: 'acad',
       efficiency: 85,
       target: 85,
@@ -198,7 +198,7 @@ export default function EfficiencyScoreModal({ isOpen, onClose }: EfficiencyScor
       ]
     },
     {
-      theatre: 'ACAD Theatre 2',
+      theatre: 'DSU Theatre 2',
       unit: 'acad',
       efficiency: 83,
       target: 85,
@@ -218,7 +218,7 @@ export default function EfficiencyScoreModal({ isOpen, onClose }: EfficiencyScor
       ]
     },
     {
-      theatre: 'ACAD Theatre 3',
+      theatre: 'DSU Theatre 3',
       unit: 'acad',
       efficiency: 90,
       target: 85,

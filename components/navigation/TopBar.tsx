@@ -107,12 +107,12 @@ export default function TopBar({ activeTab, setActiveTab }: TopBarProps) {
             {/* User Profile - Simplified on mobile */}
             <div className="flex items-center space-x-2 pl-2 sm:pl-4 border-l border-blue-600">
               <div className="text-right hidden md:block">
-                <p className="text-sm font-semibold">Coco Martin</p>
-                <p className="text-xs text-blue-200">Theatre Manager</p>
-                <p className="text-xs text-blue-200">Royal London Hospital</p>
+                <p className="text-sm font-semibold">Alexander Monterubio</p>
+                <p className="text-xs text-blue-200">Theatre Manager/Innovator</p>
+                <p className="text-xs text-blue-200">NHSCEP Hospital</p>
               </div>
               <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-600 rounded-full flex items-center justify-center text-xs sm:text-base">
-                CM
+                AM
               </div>
             </div>
           </div>
