@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   X,
   Clock,
@@ -14,79 +14,128 @@ import {
   UserCheck,
   UserX
 } from 'lucide-react';
+import { monthSchedule } from '@/lib/mockData';
 
 interface TheatreTimelineModalProps {
   isOpen: boolean;
   onClose: () => void;
   theatre: string;
+  date?: string; // YYYY-MM-DD format, defaults to today (Oct 21, 2024)
 }
 
-export default function TheatreTimelineModal({ isOpen, onClose, theatre }: TheatreTimelineModalProps) {
+export default function TheatreTimelineModal({ isOpen, onClose, theatre, date = '2024-10-21' }: TheatreTimelineModalProps) {
   if (!isOpen) return null;
 
-  const procedures = [
-    {
-      id: '1',
-      time: '08:00',
-      procedure: 'Total Hip Replacement',
-      patient: 'MRN: 12345678',
-      surgeon: 'J. Smith',
-      timeline: [
-        { time: '07:30', event: 'Patient sent for', status: 'completed', ward: 'Ward 7B', comment: 'Request sent to porter (J. Williams)' },
-        { time: '07:45', event: 'Patient arrived in reception', status: 'completed', comment: 'Accepted by RN M. Johnson' },
-        { time: '07:50', event: 'Pre-op checks complete', status: 'completed', staff: 'A. Flores (RN1)', comment: 'Patient with slightly elevated BP 145/92 - Anaesthetist informed' },
-        { time: '08:00', event: 'Into theatre', status: 'completed' },
-        { time: '08:10', event: 'Anaesthetic start', status: 'completed', staff: 'F. James', note: 'WHO checklist completed', comment: 'General anaesthesia induced, no complications' },
-        { time: '08:45', event: 'Staff relief', status: 'relief', staff: 'F. James relieved by S. Patel (coffee break)' },
-        { time: '08:50', event: 'Surgery start', status: 'completed', staff: 'J. Smith (Lead), A. Gallagher (Assist)', comment: 'Incision made, prosthesis prepared' },
-        { time: '09:00', event: 'Staff returned', status: 'relief', staff: 'F. James returned from break' },
-        { time: '10:30', event: 'Surgery end', status: 'completed', comment: 'Procedure completed successfully, minimal blood loss' },
-        { time: '10:45', event: 'To recovery', status: 'completed', staff: 'Handover to M. Wilson (Recovery RN)', comment: 'Patient stable, vital signs normal' },
-        { time: '11:30', event: 'Discharged to ward', status: 'completed', ward: 'HDU Level 2', comment: 'Patient mobilising well, pain controlled' }
-      ],
-      alerts: [
-        { type: 'delay', message: '15 min delay - awaiting implant delivery', time: '08:35' }
-      ]
-    },
-    {
-      id: '2',
-      time: '12:00',
-      procedure: 'Knee Arthroscopy',
-      patient: 'MRN: 87654321',
-      surgeon: 'J. Smith',
-      timeline: [
-        { time: '11:30', event: 'Patient sent for', status: 'completed', ward: 'Day Surgery Unit', comment: 'Porter assigned (K. Thomas)' },
-        { time: '11:45', event: 'Patient arrived in reception', status: 'completed', comment: 'Pre-op fasting confirmed 6+ hours' },
-        { time: '12:00', event: 'Into theatre', status: 'in-progress', comment: 'Patient transfer in progress' },
-        { time: '12:10', event: 'Anaesthetic start', status: 'pending', staff: 'S. Patel' },
-        { time: '12:25', event: 'Surgery start', status: 'pending' },
-        { time: '13:00', event: 'Surgery end', status: 'pending' },
-        { time: '13:15', event: 'To recovery', status: 'pending' },
-        { time: '14:00', event: 'Discharge to ward', status: 'pending', ward: 'Day Surgery Unit' }
-      ],
-      alerts: []
-    },
-    {
-      id: '3',
-      time: '14:30',
-      procedure: 'Revision Hip Replacement',
-      patient: 'MRN: 11223344',
-      surgeon: 'J. Smith',
-      timeline: [
-        { time: '14:00', event: 'Patient sent for', status: 'pending', ward: 'Ward 5A' },
-        { time: '14:15', event: 'Patient arrival', status: 'pending' },
-        { time: '14:30', event: 'Into theatre', status: 'pending' },
-        { time: '14:40', event: 'Anaesthetic start', status: 'pending', staff: 'F. James' },
-        { time: '15:00', event: 'Surgery start', status: 'pending' },
-        { time: '17:30', event: 'Surgery end (est)', status: 'pending' },
-        { time: '17:45', event: 'To recovery', status: 'pending' },
-        { time: '18:30', event: 'Discharge to ward', status: 'pending', ward: 'Ortho Ward 6' }
-      ],
-      alerts: [
-        { type: 'warning', message: 'Complex case - may overrun', time: '' }
-      ]
-    }
-  ];
+  // Get procedures for the selected theatre and date from centralized mock data
+  const theatreCases = useMemo(() => {
+    return monthSchedule.filter(c => c.theatre === theatre && c.date === date);
+  }, [theatre, date]);
+
+  // Transform to timeline format with mock timeline events
+  // For demo purposes, generating simplified timeline events
+  const procedures = theatreCases.map((caseData, idx) => {
+    const schedTime = caseData.scheduledTime;
+    const [schedHour, schedMin] = schedTime.split(':').map(Number);
+
+    // Generate realistic timeline based on procedure time
+    const generateTimeline = () => {
+      const timeline = [];
+      let currentMin = schedHour * 60 + schedMin;
+
+      // Patient sent for (30 min before)
+      currentMin -= 30;
+      timeline.push({
+        time: `${String(Math.floor(currentMin / 60)).padStart(2, '0')}:${String(currentMin % 60).padStart(2, '0')}`,
+        event: 'Patient sent for',
+        status: caseData.status === 'completed' ? 'completed' : (idx === 0 ? 'completed' : 'pending'),
+        ward: `Ward ${Math.floor(Math.random() * 10) + 1}${String.fromCharCode(65 + Math.floor(Math.random() * 3))}`,
+        comment: `Request sent to porter`
+      });
+
+      // Patient arrived (15 min before)
+      currentMin += 15;
+      timeline.push({
+        time: `${String(Math.floor(currentMin / 60)).padStart(2, '0')}:${String(currentMin % 60).padStart(2, '0')}`,
+        event: 'Patient arrived in reception',
+        status: caseData.status === 'completed' ? 'completed' : (idx === 0 ? 'completed' : 'pending'),
+        comment: `Accepted by ${caseData.team.scrubNurse.name}`
+      });
+
+      // Pre-op checks (10 min before)
+      currentMin += 5;
+      timeline.push({
+        time: `${String(Math.floor(currentMin / 60)).padStart(2, '0')}:${String(currentMin % 60).padStart(2, '0')}`,
+        event: 'Pre-op checks complete',
+        status: caseData.status === 'completed' ? 'completed' : (idx === 0 ? 'completed' : 'pending'),
+        staff: caseData.team.scrubNurse.name
+      });
+
+      // Into theatre (scheduled time)
+      currentMin += 10;
+      timeline.push({
+        time: schedTime,
+        event: 'Into theatre',
+        status: caseData.status === 'completed' ? 'completed' : (idx === 0 ? 'in-progress' : 'pending')
+      });
+
+      // Anaesthetic start
+      currentMin += 10;
+      timeline.push({
+        time: `${String(Math.floor(currentMin / 60)).padStart(2, '0')}:${String(currentMin % 60).padStart(2, '0')}`,
+        event: 'Anaesthetic start',
+        status: caseData.status === 'completed' ? 'completed' : (idx === 0 ? 'in-progress' : 'pending'),
+        staff: caseData.team.anaesthetist.name,
+        note: 'WHO checklist completed'
+      });
+
+      // Surgery start
+      currentMin += 15;
+      timeline.push({
+        time: `${String(Math.floor(currentMin / 60)).padStart(2, '0')}:${String(currentMin % 60).padStart(2, '0')}`,
+        event: 'Surgery start',
+        status: caseData.status === 'completed' ? 'completed' : 'pending',
+        staff: `${caseData.surgeon} (Lead), ${caseData.assistant} (Assist)`
+      });
+
+      // Surgery end
+      currentMin += caseData.estimatedDuration;
+      timeline.push({
+        time: `${String(Math.floor(currentMin / 60)).padStart(2, '0')}:${String(currentMin % 60).padStart(2, '0')}`,
+        event: 'Surgery end',
+        status: caseData.status === 'completed' ? 'completed' : 'pending'
+      });
+
+      // To recovery
+      currentMin += 15;
+      timeline.push({
+        time: `${String(Math.floor(currentMin / 60)).padStart(2, '0')}:${String(currentMin % 60).padStart(2, '0')}`,
+        event: 'To recovery',
+        status: caseData.status === 'completed' ? 'completed' : 'pending',
+        staff: 'Handover to Recovery RN'
+      });
+
+      // Discharged to ward
+      currentMin += 45;
+      timeline.push({
+        time: `${String(Math.floor(currentMin / 60)).padStart(2, '0')}:${String(currentMin % 60).padStart(2, '0')}`,
+        event: 'Discharged to ward',
+        status: caseData.status === 'completed' ? 'completed' : 'pending',
+        ward: caseData.estimatedDuration > 180 ? 'HDU Level 2' : `Ward ${Math.floor(Math.random() * 10) + 1}${String.fromCharCode(65 + Math.floor(Math.random() * 3))}`
+      });
+
+      return timeline;
+    };
+
+    return {
+      id: caseData.id,
+      time: schedTime,
+      procedure: caseData.procedureName,
+      patient: `MRN: ${caseData.patient.mrn}`,
+      surgeon: caseData.surgeon.split(' ').slice(1).join(' '), // Remove title
+      timeline: generateTimeline(),
+      alerts: caseData.notes.length > 0 ? [{ type: 'warning', message: caseData.notes[0], time: '' }] : []
+    };
+  });
 
   const getStatusColor = (status: string) => {
     switch (status) {

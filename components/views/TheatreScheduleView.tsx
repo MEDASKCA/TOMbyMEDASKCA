@@ -22,26 +22,10 @@ import {
   List,
   Columns
 } from 'lucide-react';
+import { monthSchedule, getCasesForDate, type ScheduledCase } from '@/lib/mockData';
 
-interface Procedure {
-  id: string;
-  listOrder: number;
-  theatre: string;
-  scheduledTime: string;
-  estimatedDuration: number;
-  procedureName: string;
-  specialty: string;
-  surgeon: string;
-  assistant: string;
-  anaesthetist: string;
-  anaesNP: string;
-  scrubNP: string;
-  equipment: string[];
-  requirements: string[];
-  status: 'scheduled' | 'in-progress' | 'completed' | 'delayed';
-  notes: string[];
-  requests: string[];
-}
+// Type alias for compatibility with existing code
+type Procedure = ScheduledCase;
 
 interface ContextMenu {
   visible: boolean;
@@ -51,8 +35,8 @@ interface ContextMenu {
 }
 
 export default function TheatreScheduleView() {
-  // Set "today" as November 3, 2024
-  const TODAY = new Date(2024, 10, 3); // Month is 0-indexed, so 10 = November
+  // Set "today" as October 21, 2024 (start of our mock data period)
+  const TODAY = new Date(2024, 9, 21); // Month is 0-indexed, so 9 = October
 
   const [viewMode, setViewMode] = useState<'calendar' | 'list' | 'panel'>('calendar');
   const [selectedDate, setSelectedDate] = useState(TODAY);
@@ -72,172 +56,27 @@ export default function TheatreScheduleView() {
   const [selectedProcedure, setSelectedProcedure] = useState<Procedure | null>(null);
   const contextMenuRef = useRef<HTMLDivElement>(null);
 
-  // Theatre list matching dashboard
+  // Theatre list matching dashboard and mock data
   const theatres = [
     'Main Theatre 1',
     'Main Theatre 3',
     'Main Theatre 4',
-    'Main Theatre 5',
     'Main Theatre 6',
     'Main Theatre 7',
-    'Main Theatre 8'
+    'Main Theatre 8',
+    'Main Theatre 10',
+    'Main Theatre 11',
+    'Main Theatre 12',
+    'ACAD Theatre 1',
+    'ACAD Theatre 2',
+    'ACAD Theatre 3',
+    'ACAD Theatre 4',
+    'ACAD Theatre 7'
   ];
 
-  // Mock data matching the dashboard - November 3, 2024
-  const [procedures, setProcedures] = useState<Procedure[]>([
-    {
-      id: 'p1',
-      listOrder: 1,
-      theatre: 'Main Theatre 1',
-      scheduledTime: '08:00',
-      estimatedDuration: 150,
-      procedureName: 'Total Hip Replacement',
-      specialty: 'Elective Orthopaedics',
-      surgeon: 'Mr. J. Smith',
-      assistant: 'A. Gallagher',
-      anaesthetist: 'Dr. F. James',
-      anaesNP: 'L. O\'Brien',
-      scrubNP: 'RN A. Flores',
-      equipment: ['C-Arm', 'Orthopaedic Set', 'Hip Prosthesis'],
-      requirements: ['Cell Salvage', 'Blood on standby (2 units)'],
-      status: 'completed',
-      notes: ['Patient metal allergy - ceramic head used'],
-      requests: []
-    },
-    {
-      id: 'p2',
-      listOrder: 2,
-      theatre: 'Main Theatre 1',
-      scheduledTime: '10:30',
-      estimatedDuration: 90,
-      procedureName: 'Knee Arthroscopy',
-      specialty: 'Elective Orthopaedics',
-      surgeon: 'Mr. J. Smith',
-      assistant: 'A. Gallagher',
-      anaesthetist: 'Dr. F. James',
-      anaesNP: 'L. O\'Brien',
-      scrubNP: 'ODP D. Jordan',
-      equipment: ['Arthroscopy Set', 'Video Tower'],
-      requirements: ['Tourniquet'],
-      status: 'in-progress',
-      notes: [],
-      requests: []
-    },
-    {
-      id: 'p3',
-      listOrder: 3,
-      theatre: 'Main Theatre 1',
-      scheduledTime: '12:30',
-      estimatedDuration: 120,
-      procedureName: 'Total Knee Replacement',
-      specialty: 'Elective Orthopaedics',
-      surgeon: 'Mr. J. Smith',
-      assistant: 'A. Gallagher',
-      anaesthetist: 'Dr. F. James',
-      anaesNP: 'L. O\'Brien',
-      scrubNP: 'RN A. Flores',
-      equipment: ['C-Arm', 'Orthopaedic Set', 'Knee Prosthesis'],
-      requirements: ['Cell Salvage', 'Tourniquet'],
-      status: 'scheduled',
-      notes: [],
-      requests: []
-    },
-    {
-      id: 'p4',
-      listOrder: 1,
-      theatre: 'Main Theatre 3',
-      scheduledTime: '08:00',
-      estimatedDuration: 330,
-      procedureName: 'CABG x4',
-      specialty: 'Cardiac Surgery',
-      surgeon: 'Mr. R. Johnson',
-      assistant: 'T. Wilson',
-      anaesthetist: 'Dr. B. Thompson',
-      anaesNP: 'H. Adams',
-      scrubNP: 'RN M. Garcia',
-      equipment: ['Heart-Lung Machine', 'Cardiac Set', 'Vein Harvesting Kit'],
-      requirements: ['ICU bed confirmed', 'Blood products on standby (6 units)', 'Cell Salvage'],
-      status: 'in-progress',
-      notes: ['Complex case - 4 vessel disease'],
-      requests: []
-    },
-    {
-      id: 'p5',
-      listOrder: 2,
-      theatre: 'Main Theatre 3',
-      scheduledTime: '14:30',
-      estimatedDuration: 180,
-      procedureName: 'Aortic Valve Replacement',
-      specialty: 'Cardiac Surgery',
-      surgeon: 'Mr. R. Johnson',
-      assistant: 'T. Wilson',
-      anaesthetist: 'Dr. B. Thompson',
-      anaesNP: 'H. Adams',
-      scrubNP: 'RN L. Brown',
-      equipment: ['Heart-Lung Machine', 'Cardiac Set', 'Valve Sizer Set'],
-      requirements: ['ICU bed confirmed', 'Blood products on standby (4 units)'],
-      status: 'scheduled',
-      notes: [],
-      requests: []
-    },
-    {
-      id: 'p6',
-      listOrder: 1,
-      theatre: 'Main Theatre 5',
-      scheduledTime: '09:00',
-      estimatedDuration: 120,
-      procedureName: 'Right Hemicolectomy',
-      specialty: 'Colorectal Surgery',
-      surgeon: 'Ms. K. Davies',
-      assistant: 'P. Martinez',
-      anaesthetist: 'Dr. S. Patel',
-      anaesNP: 'N. Hughes',
-      scrubNP: 'RN C. Evans',
-      equipment: ['Laparoscopic Tower', 'Energy Device', 'Stapling Devices'],
-      requirements: ['HDU bed on standby'],
-      status: 'completed',
-      notes: [],
-      requests: []
-    },
-    {
-      id: 'p7',
-      listOrder: 2,
-      theatre: 'Main Theatre 5',
-      scheduledTime: '12:00',
-      estimatedDuration: 150,
-      procedureName: 'Anterior Resection',
-      specialty: 'Colorectal Surgery',
-      surgeon: 'Ms. K. Davies',
-      assistant: 'P. Martinez',
-      anaesthetist: 'Dr. S. Patel',
-      anaesNP: 'N. Hughes',
-      scrubNP: 'RN M. Taylor',
-      equipment: ['Laparoscopic Tower', 'Energy Device', 'Stapling Devices'],
-      requirements: ['Stoma nurse review', 'HDU bed confirmed'],
-      status: 'in-progress',
-      notes: ['Complex case - extensive adhesions expected'],
-      requests: []
-    },
-    {
-      id: 'p8',
-      listOrder: 3,
-      theatre: 'Main Theatre 5',
-      scheduledTime: '15:00',
-      estimatedDuration: 90,
-      procedureName: 'Inguinal Hernia Repair',
-      specialty: 'General Surgery',
-      surgeon: 'Ms. K. Davies',
-      assistant: 'P. Martinez',
-      anaesthetist: 'Dr. S. Patel',
-      anaesNP: 'N. Hughes',
-      scrubNP: 'RN C. Evans',
-      equipment: ['Basic Laparoscopic Set'],
-      requirements: [],
-      status: 'scheduled',
-      notes: [],
-      requests: []
-    }
-  ]);
+  // Use centralized mock data from lib/mockData.ts
+  // Data covers October 21 - November 20, 2024
+  const [procedures, setProcedures] = useState<Procedure[]>(monthSchedule);
 
   // Generate calendar days for the full month
   const getCalendarDays = () => {
@@ -271,65 +110,32 @@ export default function TheatreScheduleView() {
 
   // Get procedures for a specific date and selected theatre
   const getProceduresForDay = (date: Date) => {
-    const isToday = date.toDateString() === TODAY.toDateString();
-    if (isToday) {
-      return procedures.filter(p => p.theatre === selectedTheatre);
+    const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD format
+    return procedures.filter(p => p.date === dateStr && p.theatre === selectedTheatre);
+  };
+
+  const getProcedureCountByDay = (date: Date) => {
+    const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD format
+    const theatreProcs = procedures.filter(p => p.date === dateStr && p.theatre === selectedTheatre);
+    return theatreProcs.length;
+  };
+
+  const getSurgeonsForDay = (date: Date) => {
+    const dateStr = date.toISOString().split('T')[0];
+    const theatreProcs = procedures.filter(p => p.date === dateStr && p.theatre === selectedTheatre);
+    if (theatreProcs.length > 0) {
+      return Array.from(new Set(theatreProcs.map(p => p.surgeon)));
     }
     return [];
   };
 
-  const getProcedureCountByDay = (date: Date) => {
-    const isToday = date.toDateString() === TODAY.toDateString();
-    if (isToday) {
-      const theatreProcs = procedures.filter(p => p.theatre === selectedTheatre);
-      return theatreProcs.length;
-    }
-    // For other days in November, return mock counts based on theatre
-    if (date.getMonth() === currentMonth.getMonth() && date.getFullYear() === currentMonth.getFullYear()) {
-      const dayOfWeek = date.getDay();
-      // Weekends (0 = Sunday, 6 = Saturday) have fewer or no procedures
-      if (dayOfWeek === 0 || dayOfWeek === 6) {
-        return selectedTheatre === 'Main Theatre 5' ? Math.floor(Math.random() * 3) + 1 : 0; // Emergency theatre only
-      }
-      return Math.floor(Math.random() * 4) + 2; // 2-5 procedures on weekdays
-    }
-    return 0;
-  };
-
-  const getSurgeonsForDay = (date: Date) => {
-    const theatreProcs = procedures.filter(p => p.theatre === selectedTheatre);
-    if (theatreProcs.length > 0) {
-      return Array.from(new Set(theatreProcs.map(p => p.surgeon)));
-    }
-    // Return surgeon based on selected theatre (from dashboard)
-    const theatreSurgeonMap: Record<string, string> = {
-      'Main Theatre 1': 'Mr. J. Smith',
-      'Main Theatre 3': 'Mr. R. Johnson',
-      'Main Theatre 4': 'Mr. A. Robertson',
-      'Main Theatre 5': 'Ms. I. Moore',
-      'Main Theatre 6': 'Mr. P. Wright',
-      'Main Theatre 7': 'Ms. V. Edwards',
-      'Main Theatre 8': 'Ms. B. Morgan'
-    };
-    return [theatreSurgeonMap[selectedTheatre] || 'TBC'];
-  };
-
   const getAnaesthetistsForDay = (date: Date) => {
-    const theatreProcs = procedures.filter(p => p.theatre === selectedTheatre);
+    const dateStr = date.toISOString().split('T')[0];
+    const theatreProcs = procedures.filter(p => p.date === dateStr && p.theatre === selectedTheatre);
     if (theatreProcs.length > 0) {
       return Array.from(new Set(theatreProcs.map(p => p.anaesthetist)));
     }
-    // Return anaesthetist based on selected theatre (from dashboard)
-    const theatreAnaesthetistMap: Record<string, string> = {
-      'Main Theatre 1': 'Dr. F. James',
-      'Main Theatre 3': 'Dr. B. Thompson',
-      'Main Theatre 4': 'Dr. D. Mitchell',
-      'Main Theatre 5': 'Dr. K. Baker',
-      'Main Theatre 6': 'Dr. R. Phillips',
-      'Main Theatre 7': 'Dr. X. Morris',
-      'Main Theatre 8': 'Dr. D. Murphy'
-    };
-    return [theatreAnaesthetistMap[selectedTheatre] || 'TBC'];
+    return [];
   };
 
   const handleDayClick = (day: Date) => {
