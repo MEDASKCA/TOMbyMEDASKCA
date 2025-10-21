@@ -33,3 +33,22 @@ body {
     transform: rotate(10deg);
   }
 }
+
+/* Portrait/Landscape utilities */
+@media (orientation: portrait) {
+  .portrait\:flex {
+    display: flex;
+  }
+  .portrait\:hidden {
+    display: none;
+  }
+}
+
+@media (orientation: landscape) {
+  .landscape\:flex {
+    display: flex;
+  }
+  .landscape\:hidden {
+    display: none;
+  }
+}
