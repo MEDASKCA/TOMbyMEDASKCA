@@ -870,7 +870,7 @@ export default function TheatreScheduleView() {
             </button>
             <button
               onClick={() => setViewMode('panel')}
-              className={`px-4 py-2 rounded flex items-center space-x-2 text-sm font-medium transition-colors ${
+              className={`hidden lg:flex px-4 py-2 rounded items-center space-x-2 text-sm font-medium transition-colors ${
                 viewMode === 'panel'
                   ? 'bg-blue-600 text-white'
                   : 'text-gray-700 hover:bg-gray-100'

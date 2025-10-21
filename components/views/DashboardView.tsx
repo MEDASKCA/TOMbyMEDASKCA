@@ -41,6 +41,30 @@ export default function DashboardView() {
   const [showTurnoverModal, setShowTurnoverModal] = useState(false);
   const [showEfficiencyModal, setShowEfficiencyModal] = useState(false);
 
+  // Helper function to add professional titles to staff names
+  const addStaffTitle = (name: string, role: string): string => {
+    if (name === 'VACANT' || !name) return name;
+
+    // If name already has a title (Mr., Ms., Dr., RN, ODP), return as is
+    if (name.match(/^(Mr\.|Ms\.|Dr\.|RN|ODP)\s/)) return name;
+
+    // Add title based on role
+    if (role.includes('Consultant') || role.includes('Assistant')) {
+      // Surgeons get Mr. or Ms. - using Mr. as default
+      return `Mr. ${name}`;
+    } else if (role.includes('Anaesthetist')) {
+      return `Dr. ${name}`;
+    } else if (role.includes('Nurse') || role.includes('Practitioner')) {
+      // Nurses and practitioners - check if they already have RN or ODP prefix
+      // If not, add RN as default
+      if (!name.startsWith('RN ') && !name.startsWith('ODP ')) {
+        return `RN ${name}`;
+      }
+    }
+
+    return name;
+  };
+
   const handleTheatreClick = (theatreName: string) => {
     setSelectedTheatre(theatreName);
     setShowTimeline(true);
@@ -828,7 +852,7 @@ export default function DashboardView() {
       </div>
 
       {/* Key Performance Metrics - Clickable Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {/* Theatres Operational Card */}
         <div
           onClick={() => setShowTheatreOpsModal(true)}
@@ -893,21 +917,30 @@ export default function DashboardView() {
       {/* Theatre Team Allocations - Full Width */}
       {selectedUnit !== 'recovery' && (
         <div className="bg-white border border-gray-200 rounded-lg p-5 mb-6">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center justify-between">
-            <span className="flex items-center">
-              <Users className="w-5 h-5 mr-2 text-blue-600" />
-              {selectedUnit === 'all' && 'Theatre Operations - Main Theatres (12) & ACAD Day Surgery (14)'}
-              {selectedUnit === 'main' && 'Main Theatres Operations (12 Theatres)'}
-              {selectedUnit === 'acad' && 'ACAD Day Surgery Operations (14 Theatres)'}
-            </span>
-            <span className="text-xs font-normal text-gray-500">
-              {filteredTheatres.filter(t => t.status === 'surgery_started').length} Surgery Started •
-              {' '}{filteredTheatres.filter(t => t.status === 'anaesthetic_room').length} Anaesthetic Room •
-              {' '}{filteredTheatres.filter(t => t.status === 'patient_sent').length} Patient Sent •
-              {' '}{filteredTheatres.filter(t => t.status === 'standby').length} Standby •
-              {' '}{filteredTheatres.filter(t => t.status === 'closed').length} Closed
-            </span>
+          <h2 className="text-lg font-semibold text-gray-800 mb-2 flex items-center">
+            <Users className="w-5 h-5 mr-2 text-blue-600" />
+            {selectedUnit === 'all' && (
+              <>
+                <span className="lg:hidden">All Theatres</span>
+                <span className="hidden lg:inline">All Theatre Operations</span>
+              </>
+            )}
+            {selectedUnit === 'main' && (
+              <>
+                <span className="lg:hidden">Main Theatres</span>
+                <span className="hidden lg:inline">Main Theatres Operations</span>
+              </>
+            )}
+            {selectedUnit === 'acad' && (
+              <>
+                <span className="lg:hidden">ACAD Theatres</span>
+                <span className="hidden lg:inline">ACAD Theatres Operations</span>
+              </>
+            )}
           </h2>
+          <div className="text-xs font-normal text-gray-500 mb-4">
+            {filteredTheatres.filter(t => t.status === 'surgery_started').length} Surgery Started, {filteredTheatres.filter(t => t.status === 'anaesthetic_room').length} Anaesthetic Room, {filteredTheatres.filter(t => t.status === 'patient_sent').length} Patient Sent, {filteredTheatres.filter(t => t.status === 'standby').length} Standby, {filteredTheatres.filter(t => t.status === 'closed').length} Closed
+          </div>
           <div className="max-h-[600px] overflow-y-auto pr-2">
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3">
               {filteredTheatres.map((allocation, idx) => (
@@ -962,16 +995,16 @@ export default function DashboardView() {
                 </div>
                 <div className="space-y-1 text-xs">
                   {Object.entries({
-                    'Consultant': { ...allocation.team.surgeon, role: 'Consultant Surgeon' },
-                    'Assistant': { ...allocation.team.assistant, role: 'Assistant Surgeon' },
-                    'Anaesthetist': { ...allocation.team.anaesthetist, role: 'Anaesthetist' },
-                    'Anaes N/P': { ...allocation.team.anaesNP, role: 'Anaesthetic Nurse/Practitioner' },
-                    ...(allocation.team.anaesNP2 ? {'Anaes N/P 2': { ...allocation.team.anaesNP2, role: 'Anaesthetic Nurse/Practitioner' }} : {}),
-                    'Scrub N/P 1': { ...allocation.team.scrubNP1, role: 'Scrub Nurse/Practitioner' },
-                    'Scrub N/P 2': { ...allocation.team.scrubNP2, role: 'Scrub Nurse/Practitioner' },
-                    ...(allocation.team.scrubNP3 ? {'Scrub N/P 3': { ...allocation.team.scrubNP3, role: 'Scrub Nurse/Practitioner' }} : {}),
-                    ...(allocation.team.hca ? {'HCA': { ...allocation.team.hca, role: 'Healthcare Assistant' }} : {}),
-                    ...(allocation.team.techSpec ? {'Tech Spec': { ...allocation.team.techSpec, role: 'Technical Specialist' }} : {})
+                    'Cons': { ...allocation.team.surgeon, role: 'Consultant Surgeon', fullLabel: 'Consultant' },
+                    'Assist': { ...allocation.team.assistant, role: 'Assistant Surgeon', fullLabel: 'Assistant' },
+                    'Anaes': { ...allocation.team.anaesthetist, role: 'Anaesthetist', fullLabel: 'Anaesthetist' },
+                    'Anaes N/P': { ...allocation.team.anaesNP, role: 'Anaesthetic Nurse/Practitioner', fullLabel: 'Anaes N/P' },
+                    ...(allocation.team.anaesNP2 ? {'Anaes N/P 2': { ...allocation.team.anaesNP2, role: 'Anaesthetic Nurse/Practitioner', fullLabel: 'Anaes N/P 2' }} : {}),
+                    'Scrub 1': { ...allocation.team.scrubNP1, role: 'Scrub Nurse/Practitioner', fullLabel: 'Scrub N/P 1' },
+                    'Scrub 2': { ...allocation.team.scrubNP2, role: 'Scrub Nurse/Practitioner', fullLabel: 'Scrub N/P 2' },
+                    ...(allocation.team.scrubNP3 ? {'Scrub 3': { ...allocation.team.scrubNP3, role: 'Scrub Nurse/Practitioner', fullLabel: 'Scrub N/P 3' }} : {}),
+                    ...(allocation.team.hca ? {'HCA 1': { ...allocation.team.hca, role: 'Healthcare Assistant', fullLabel: 'HCA' }} : {}),
+                    ...(allocation.team.techSpec ? {'Tech Spec': { ...allocation.team.techSpec, role: 'Technical Specialist', fullLabel: 'Tech Spec' }} : {})
                   }).map(([label, staff]) => {
                     // Add null check for staff object
                     if (!staff || !staff.name) {
@@ -982,18 +1015,19 @@ export default function DashboardView() {
 
                     return (
                       <div key={label} className="group/staff">
-                        {/* Mobile: Stack vertically, Desktop: Horizontal */}
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                          <div className="flex flex-col sm:flex-row sm:items-center sm:flex-1 sm:min-w-0">
-                            <span className={`text-xs sm:text-[10px] font-medium sm:font-normal sm:mr-1 sm:min-w-[70px] sm:flex-shrink-0 ${staff.name === 'VACANT' ? 'text-gray-400' : 'text-gray-600 sm:text-gray-500'}`}>
-                              {label}:
+                        {/* Single row layout for both mobile and desktop */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center flex-1 min-w-0">
+                            <span className={`text-[10px] mr-1 min-w-[70px] flex-shrink-0 ${staff.name === 'VACANT' ? 'text-gray-400' : 'text-gray-500'}`}>
+                              <span className="lg:hidden">{label}:</span>
+                              <span className="hidden lg:inline">{staff.fullLabel || label}:</span>
                             </span>
                             {staff.name === 'VACANT' ? (
-                              <span className="text-gray-400 italic text-sm sm:text-[10px] ml-1 sm:ml-0">Vacant</span>
+                              <span className="text-gray-400 italic text-[10px]">Vacant</span>
                             ) : (
-                              <div className="flex items-center gap-1 min-w-0 mt-0.5 sm:mt-0">
+                              <div className="flex items-center gap-1 min-w-0">
                                 <span
-                                  className={`cursor-pointer hover:text-blue-600 hover:underline truncate text-sm sm:text-[10px] ${
+                                  className={`cursor-pointer hover:text-blue-600 hover:underline truncate text-[10px] ${
                                     needsReliefHighlight ? 'text-orange-600 font-semibold' : ''
                                   }`}
                                   onClick={(e) => {
@@ -1002,9 +1036,9 @@ export default function DashboardView() {
                                   }}
                                   onMouseEnter={(e) => handleStaffHover(e, staff.name.replace(/[☕⚠️]/g, '').trim(), staff.role)}
                                   onMouseLeave={() => setHoveredStaff(null)}
-                                  title={`${staff.name}${staff.shift ? ` (${staff.shift})` : ''}`}
+                                  title={`${addStaffTitle(staff.name, staff.role)}${staff.shift ? ` (${staff.shift})` : ''}`}
                                 >
-                                  {staff.name.replace(/[☕⚠️]/g, '').trim()}
+                                  {addStaffTitle(staff.name.replace(/[☕⚠️]/g, '').trim(), staff.role)}
                                 </span>
                               {staff.scrubbed && (
                                 <span
@@ -1028,10 +1062,10 @@ export default function DashboardView() {
                                     e.stopPropagation();
                                     handleReliefRequest(staff.name.replace(/[☕⚠️]/g, '').trim(), staff.role, allocation.theatre);
                                   }}
-                                  className="animate-pulse flex-shrink-0"
+                                  className="flex-shrink-0"
                                   title="Urgent: Staff needs relief"
                                 >
-                                  <Bell className="w-3 h-3 text-orange-500 hover:text-orange-600 fill-orange-200" />
+                                  <Bell className="w-3 h-3 text-orange-500 hover:text-orange-600 fill-orange-200 animate-[wiggle_1s_ease-in-out_infinite]" />
                                 </button>
                               )}
                             </div>
