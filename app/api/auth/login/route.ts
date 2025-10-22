@@ -5,22 +5,22 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
-    const { username } = await request.json();
+    const { username, password } = await request.json();
 
-    // Demo users - No password required for demo access
-    const validUsers = [
-      { username: 'demo', role: 'viewer' },
-      { username: 'admin', role: 'admin' },
-      { username: 'theatremanager', role: 'manager' }
+    // Demo credentials
+    const validCredentials = [
+      { username: 'demo', password: 'nhscep2025', role: 'viewer' },
+      { username: 'admin', password: 'medaskca2025', role: 'admin' },
+      { username: 'theatremanager', password: 'tom2025', role: 'manager' }
     ];
 
-    const user = validUsers.find(
-      u => u.username.toLowerCase() === username.toLowerCase()
+    const user = validCredentials.find(
+      cred => cred.username === username && cred.password === password
     );
 
     if (user) {
       const response = NextResponse.json(
-        { success: true, message: 'Demo access granted', user: { username: user.username, role: user.role } },
+        { success: true, message: 'Authentication successful', user: { username: user.username, role: user.role } },
         { status: 200 }
       );
 
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
       return response;
     } else {
       return NextResponse.json(
-        { success: false, message: 'Invalid username. Please use: demo, admin, or theatremanager' },
+        { success: false, message: 'Invalid credentials' },
         { status: 401 }
       );
     }
