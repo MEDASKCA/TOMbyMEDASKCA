@@ -2,6 +2,11 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
+  // Skip middleware for API routes - they handle their own logic
+  if (request.nextUrl.pathname.startsWith('/api/')) {
+    return NextResponse.next();
+  }
+
   // Check if user is authenticated
   const isAuthenticated = request.cookies.get('tom_authenticated')?.value === 'true';
 
