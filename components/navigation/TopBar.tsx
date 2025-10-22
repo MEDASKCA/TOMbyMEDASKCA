@@ -13,7 +13,8 @@ import {
   HelpCircle,
   Menu,
   Activity,
-  X
+  X,
+  LogOut
 } from 'lucide-react';
 
 interface TopBarProps {
@@ -24,6 +25,15 @@ interface TopBarProps {
 export default function TopBar({ activeTab, setActiveTab }: TopBarProps) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/login';
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   const tabs = [
     { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard },
@@ -103,6 +113,16 @@ export default function TopBar({ activeTab, setActiveTab }: TopBarProps) {
             {/* Settings - Hidden on small screens */}
             <button className="hidden sm:block p-2 hover:bg-blue-800 rounded-lg transition-colors">
               <Settings className="w-5 h-5" />
+            </button>
+
+            {/* Logout Button */}
+            <button
+              onClick={handleLogout}
+              className="p-2 hover:bg-blue-800 rounded-lg transition-colors flex items-center space-x-2"
+              title="Logout"
+            >
+              <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="hidden lg:inline text-sm">Logout</span>
             </button>
 
             {/* User Profile - Simplified on mobile */}
