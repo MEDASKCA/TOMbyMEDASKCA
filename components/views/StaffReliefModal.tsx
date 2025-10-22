@@ -86,6 +86,20 @@ export default function StaffReliefModal({ isOpen, onClose }: StaffReliefModalPr
   const [selectedStaffForRelief, setSelectedStaffForRelief] = useState<string | null>(null);
   const [breakFilter, setBreakFilter] = useState<'all' | 'no_break' | 'overdue' | 'taken'>('all');
   const [selectedStaffForBreak, setSelectedStaffForBreak] = useState<StaffMember | null>(null);
+  const [expandedStaffCards, setExpandedStaffCards] = useState<Set<string>>(new Set());
+
+
+  const toggleStaffCard = (staffId: string) => {
+    setExpandedStaffCards(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(staffId)) {
+        newSet.delete(staffId);
+      } else {
+        newSet.add(staffId);
+      }
+      return newSet;
+    });
+  };
 
   if (!isOpen) return null;
 
@@ -352,17 +366,17 @@ export default function StaffReliefModal({ isOpen, onClose }: StaffReliefModalPr
 
   return (
     <div className="fixed inset-0 bg-gray-100 bg-opacity-95 flex items-center justify-center z-50">
-      <div className="bg-white shadow-xl w-full h-full overflow-hidden flex">
+      <div className="bg-white shadow-xl w-full h-full overflow-hidden flex flex-col md:flex-row">
         {/* Left Panel - Relief Requests List */}
-        <div className="w-96 bg-gray-50 border-r border-gray-200 flex flex-col flex-shrink-0">
+        <div className="w-1/4 sm:w-1/3 md:w-80 lg:w-96 bg-gray-50 border-r border-gray-200 flex flex-col flex-shrink-0">
           {/* Header */}
-          <div className="bg-gradient-to-r from-orange-600 to-orange-700 text-white p-4">
+          <div className="bg-gradient-to-r from-orange-600 to-orange-700 text-white p-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <Bell className="w-6 h-6" />
                 <div>
-                  <h2 className="text-xl font-bold">Relief Requests</h2>
-                  <p className="text-orange-100 text-sm">Manage staff relief deployment</p>
+                  <h2 className="text-base md:text-xl font-bold">Relief Requests</h2>
+                  <p className="text-orange-100 text-xs hidden md:block">Manage staff relief deployment</p>
                 </div>
               </div>
               <button onClick={onClose} className="p-2 hover:bg-orange-800 rounded-lg transition-colors">
@@ -610,15 +624,15 @@ export default function StaffReliefModal({ isOpen, onClose }: StaffReliefModalPr
           ) : (
             <div className="flex-1 flex flex-col overflow-hidden">
               {/* Overview Header */}
-              <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-4 border-b border-purple-800">
-                <h3 className="text-lg font-bold">Entitlement Breaks Overview</h3>
-                <p className="text-purple-100 text-sm mt-1">
+              <div className="bg-gradient-to-r from-purple-600 to-purple-700 text-white p-2 border-b border-purple-800">
+                <h3 className="text-base md:text-lg font-bold">Wellbeing Breaks</h3>
+                <p className="text-purple-100 text-xs mt-1 hidden md:block">
                   Lunch (30 min) for 9+ hour shifts • Supper (30 min) for 11+ hour shifts
                 </p>
               </div>
 
               {/* Filter Buttons */}
-              <div className="bg-white border-b border-gray-200 p-3">
+              <div className="bg-white border-b border-gray-200 p-2">
                 <div className="flex items-center space-x-2">
                   <Filter className="w-4 h-4 text-gray-500" />
                   <span className="text-xs font-medium text-gray-700">Filter:</span>
@@ -666,18 +680,18 @@ export default function StaffReliefModal({ isOpen, onClose }: StaffReliefModalPr
               </div>
 
               {/* Staff Grid - 6 columns */}
-              <div className="flex-1 overflow-y-auto p-4">
-                <div className="grid grid-cols-6 gap-3">
+              <div className="flex-1 overflow-y-auto overflow-x-auto p-4">
+                <div className="grid grid-cols-6 gap-3 min-w-[1800px] lg:min-w-full">
                   {filteredStaff.map((staff) => (
                     <div
                       key={staff.id}
-                      className="bg-white rounded-lg border-2 border-gray-200 p-3 cursor-pointer hover:border-gray-300 transition-all"
+                      className="bg-white rounded-lg border-2 border-gray-200 p-3 cursor-pointer hover:border-gray-300 transition-all min-w-[250px]"
                     >
                       {/* Staff Info */}
                       <div className="mb-3">
-                        <h4 className="font-semibold text-gray-900 text-sm mb-1 truncate">{staff.name}</h4>
-                        <p className="text-xs text-gray-600 truncate">{staff.role}</p>
-                        <p className="text-xs text-gray-500 truncate">{staff.theatre}</p>
+                        <h4 className="font-semibold text-gray-900 text-sm mb-1 break-words">{staff.name}</h4>
+                        <p className="text-xs text-gray-600 break-words">{staff.role}</p>
+                        <p className="text-xs text-gray-500 break-words">{staff.theatre}</p>
                       </div>
 
                       {/* Break Buttons */}
