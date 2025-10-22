@@ -2,13 +2,12 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { User, Eye, EyeOff } from 'lucide-react';
+import { User } from 'lucide-react';
 import Image from 'next/image';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [credentials, setCredentials] = useState({ username: '', password: '' });
-  const [showPassword, setShowPassword] = useState(false);
+  const [username, setUsername] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [authenticated, setAuthenticated] = useState(false);
@@ -24,7 +23,7 @@ export default function LoginPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(credentials),
+        body: JSON.stringify({ username }),
       });
 
       const data = await response.json();
@@ -36,7 +35,7 @@ export default function LoginPage() {
           router.push('/');
         }, 1000);
       } else {
-        setError(data.message || 'Invalid username or password. Please try again.');
+        setError(data.message || 'Invalid username. Please try again.');
         setLoading(false);
       }
     } catch (error) {
@@ -126,7 +125,7 @@ export default function LoginPage() {
                 color: '#eaf0f6',
                 fontWeight: 600
               }}>
-                Username
+                Select Demo User
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -136,8 +135,8 @@ export default function LoginPage() {
                   id="username"
                   type="text"
                   required
-                  value={credentials.username}
-                  onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   className="block w-full pl-10 pr-3 py-3 rounded-lg transition-all duration-150"
                   style={{
                     background: '#0e1116',
@@ -147,51 +146,9 @@ export default function LoginPage() {
                   }}
                   onFocus={(e) => e.target.style.borderColor = '#14b8a6'}
                   onBlur={(e) => e.target.style.borderColor = '#1e2430'}
-                  placeholder="Enter your username"
+                  placeholder="Enter username (demo, admin, or theatremanager)"
                   disabled={loading}
                 />
-              </div>
-            </div>
-
-            {/* Password Field */}
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium mb-2" style={{
-                color: '#eaf0f6',
-                fontWeight: 600
-              }}>
-                Password
-              </label>
-              <div className="relative">
-                <input
-                  id="password"
-                  type={showPassword ? 'text' : 'password'}
-                  required
-                  value={credentials.password}
-                  onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-                  className="block w-full pl-3 pr-12 py-3 rounded-lg transition-all duration-150"
-                  style={{
-                    background: '#0e1116',
-                    border: '1px solid #1e2430',
-                    color: '#eaf0f6',
-                    outline: 'none'
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = '#14b8a6'}
-                  onBlur={(e) => e.target.style.borderColor = '#1e2430'}
-                  placeholder="Enter your password"
-                  disabled={loading}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  disabled={loading}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5 transition-colors" style={{ color: '#b9c4d2' }} />
-                  ) : (
-                    <Eye className="h-5 w-5 transition-colors" style={{ color: '#b9c4d2' }} />
-                  )}
-                </button>
               </div>
             </div>
 
@@ -218,7 +175,7 @@ export default function LoginPage() {
                 e.currentTarget.style.boxShadow = '0 10px 24px rgba(20,184,166,.25), 0 8px 22px rgba(59,130,246,.18)';
               }}
             >
-              {loading ? 'Authenticating...' : 'Sign In'}
+              {loading ? 'Authenticating...' : 'Access Demo'}
             </button>
           </form>
 
@@ -227,49 +184,37 @@ export default function LoginPage() {
             <p className="text-xs font-medium mb-3 text-center" style={{
               color: '#eaf0f6',
               fontWeight: 600
-            }}>Demo Credentials:</p>
+            }}>Available Demo Users:</p>
             <div className="space-y-2 text-xs" style={{ color: '#b9c4d2' }}>
               <div className="p-3 rounded-lg" style={{
                 background: 'rgba(255,255,255,.02)',
                 border: '1px solid #1e2430'
               }}>
-                <p className="font-medium" style={{ color: '#eaf0f6', fontWeight: 600 }}>Viewer Access:</p>
+                <p className="font-medium" style={{ color: '#eaf0f6', fontWeight: 600 }}>Viewer Access</p>
                 <p>Username: <span className="font-mono px-2 py-1 rounded" style={{
                   background: '#0e1116',
                   color: '#14b8a6'
                 }}>demo</span></p>
-                <p>Password: <span className="font-mono px-2 py-1 rounded" style={{
-                  background: '#0e1116',
-                  color: '#14b8a6'
-                }}>nhscep2025</span></p>
               </div>
               <div className="p-3 rounded-lg" style={{
                 background: 'rgba(255,255,255,.02)',
                 border: '1px solid #1e2430'
               }}>
-                <p className="font-medium" style={{ color: '#eaf0f6', fontWeight: 600 }}>Admin Access:</p>
+                <p className="font-medium" style={{ color: '#eaf0f6', fontWeight: 600 }}>Admin Access</p>
                 <p>Username: <span className="font-mono px-2 py-1 rounded" style={{
                   background: '#0e1116',
                   color: '#14b8a6'
                 }}>admin</span></p>
-                <p>Password: <span className="font-mono px-2 py-1 rounded" style={{
-                  background: '#0e1116',
-                  color: '#14b8a6'
-                }}>medaskca2025</span></p>
               </div>
               <div className="p-3 rounded-lg" style={{
                 background: 'rgba(255,255,255,.02)',
                 border: '1px solid #1e2430'
               }}>
-                <p className="font-medium" style={{ color: '#eaf0f6', fontWeight: 600 }}>Manager Access:</p>
+                <p className="font-medium" style={{ color: '#eaf0f6', fontWeight: 600 }}>Manager Access</p>
                 <p>Username: <span className="font-mono px-2 py-1 rounded" style={{
                   background: '#0e1116',
                   color: '#14b8a6'
                 }}>theatremanager</span></p>
-                <p>Password: <span className="font-mono px-2 py-1 rounded" style={{
-                  background: '#0e1116',
-                  color: '#14b8a6'
-                }}>tom2025</span></p>
               </div>
             </div>
           </div>
@@ -280,7 +225,7 @@ export default function LoginPage() {
           color: '#b9c4d2',
           opacity: 0.8
         }}>
-          Secure access to Theatre Operations Manager
+          Demo access to Theatre Operations Manager
         </p>
       </div>
     </div>
