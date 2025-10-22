@@ -14,7 +14,9 @@ import {
   Menu,
   Activity,
   X,
-  LogOut
+  LogOut,
+  UserCircle,
+  ChevronDown
 } from 'lucide-react';
 
 interface TopBarProps {
@@ -25,6 +27,7 @@ interface TopBarProps {
 export default function TopBar({ activeTab, setActiveTab }: TopBarProps) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -115,26 +118,80 @@ export default function TopBar({ activeTab, setActiveTab }: TopBarProps) {
               <Settings className="w-5 h-5" />
             </button>
 
-            {/* Logout Button */}
-            <button
-              onClick={handleLogout}
-              className="p-2 hover:bg-blue-800 rounded-lg transition-colors flex items-center space-x-2"
-              title="Logout"
-            >
-              <LogOut className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="hidden lg:inline text-sm">Logout</span>
-            </button>
+            {/* User Profile with Dropdown Menu */}
+            <div className="relative pl-2 sm:pl-4 border-l border-blue-600">
+              <button
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="flex items-center space-x-2 hover:bg-blue-800 rounded-lg p-1 sm:p-2 transition-colors"
+              >
+                <div className="text-right hidden md:block">
+                  <p className="text-sm font-semibold">Alexander Monterubio</p>
+                  <p className="text-xs text-blue-200">Theatre Manager/Innovator</p>
+                  <p className="text-xs text-blue-200">NHSCEP Hospital</p>
+                </div>
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-600 rounded-full flex items-center justify-center text-xs sm:text-base ring-2 ring-blue-400">
+                  AM
+                </div>
+                <ChevronDown className="w-4 h-4 hidden sm:block" />
+              </button>
 
-            {/* User Profile - Simplified on mobile */}
-            <div className="flex items-center space-x-2 pl-2 sm:pl-4 border-l border-blue-600">
-              <div className="text-right hidden md:block">
-                <p className="text-sm font-semibold">Alexander Monterubio</p>
-                <p className="text-xs text-blue-200">Theatre Manager/Innovator</p>
-                <p className="text-xs text-blue-200">NHSCEP Hospital</p>
-              </div>
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-600 rounded-full flex items-center justify-center text-xs sm:text-base">
-                AM
-              </div>
+              {/* Dropdown Menu */}
+              {showUserMenu && (
+                <div className="absolute right-0 mt-2 w-56 bg-white text-gray-800 rounded-lg shadow-xl z-50 overflow-hidden">
+                  {/* User Info Header */}
+                  <div className="p-4 bg-gradient-to-r from-blue-50 to-blue-100 border-b border-gray-200">
+                    <p className="text-sm font-semibold text-gray-900">Alexander Monterubio</p>
+                    <p className="text-xs text-gray-600">Theatre Manager/Innovator</p>
+                  </div>
+
+                  {/* Menu Items */}
+                  <div className="py-2">
+                    <button
+                      onClick={() => {
+                        setShowUserMenu(false);
+                        // TODO: Navigate to profile page
+                        alert('Profile page coming soon!');
+                      }}
+                      className="w-full flex items-center space-x-3 px-4 py-3 text-sm hover:bg-gray-50 transition-colors"
+                    >
+                      <UserCircle className="w-5 h-5 text-gray-600" />
+                      <span className="text-gray-700">Update Profile</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setShowUserMenu(false);
+                        // TODO: Navigate to settings page
+                        alert('Settings page coming soon!');
+                      }}
+                      className="w-full flex items-center space-x-3 px-4 py-3 text-sm hover:bg-gray-50 transition-colors"
+                    >
+                      <Settings className="w-5 h-5 text-gray-600" />
+                      <span className="text-gray-700">Settings</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setShowUserMenu(false);
+                        // TODO: Navigate to help page
+                        alert('Help page coming soon!');
+                      }}
+                      className="w-full flex items-center space-x-3 px-4 py-3 text-sm hover:bg-gray-50 transition-colors border-b border-gray-100"
+                    >
+                      <HelpCircle className="w-5 h-5 text-gray-600" />
+                      <span className="text-gray-700">Help & Support</span>
+                    </button>
+
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center space-x-3 px-4 py-3 text-sm hover:bg-red-50 transition-colors"
+                    >
+                      <LogOut className="w-5 h-5 text-red-600" />
+                      <span className="text-red-600 font-medium">Sign Out</span>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
