@@ -1003,7 +1003,7 @@ export default function DashboardView() {
             </span>
           </div>
           <h3 className="text-2xl font-bold text-gray-900">{staffCount}</h3>
-          <p className="text-sm text-gray-700 font-medium">Staff On Duty</p>
+          <p className="text-sm text-gray-900 font-medium">Staff On Duty</p>
           {selectedUnit !== 'recovery' && (staffOnBreak > 0 || staffDelayed > 0) && (
             <p className="text-xs text-orange-600 mt-2 font-medium">
               {staffOnBreak > 0 && `${staffOnBreak} on break`}
@@ -1030,7 +1030,7 @@ export default function DashboardView() {
             <span className="text-xs bg-purple-600 text-white px-2 py-1 rounded font-medium">On Track</span>
           </div>
           <h3 className="text-2xl font-bold text-gray-900">18 min</h3>
-          <p className="text-sm text-gray-700 font-medium">Avg Turnover Time</p>
+          <p className="text-sm text-gray-900 font-medium">Avg Turnover Time</p>
           <p className="text-xs text-green-600 mt-2 font-medium">↓ 5 min vs target (23 min)</p>
           <p className="text-xs text-purple-600 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click for details →</p>
         </div>
@@ -1045,7 +1045,7 @@ export default function DashboardView() {
             <span className="text-xs bg-orange-600 text-white px-2 py-1 rounded font-medium">High</span>
           </div>
           <h3 className="text-2xl font-bold text-gray-900">94%</h3>
-          <p className="text-sm text-gray-700 font-medium">Efficiency Score</p>
+          <p className="text-sm text-gray-900 font-medium">Efficiency Score</p>
           <p className="text-xs text-green-600 mt-2 font-medium">↑ 3% from yesterday</p>
           <p className="text-xs text-orange-600 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click for details →</p>
         </div>
@@ -1093,7 +1093,7 @@ export default function DashboardView() {
                 <div className="mb-2">
                   <div className="flex items-center justify-between mb-1">
                     <p
-                      className="font-bold text-sm flex items-center cursor-help"
+                      className="font-bold text-sm text-gray-900 flex items-center cursor-help"
                       title={`Extension: ${theatreExtensions[allocation.theatre] || 'N/A'}`}
                     >
                       {allocation.theatre}
@@ -1110,8 +1110,8 @@ export default function DashboardView() {
                       {allocation.patientStatus || (allocation.status === 'closed' ? '⛔ CLOSED' : allocation.status.toUpperCase())}
                     </span>
                   </div>
-                  <p className="text-sm sm:text-xs text-gray-600 font-medium">{allocation.specialty}</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-sm sm:text-xs text-gray-900 font-medium">{allocation.specialty}</p>
+                  <p className="text-xs text-gray-900">
                     {allocation.session} {allocation.sessionsCount > 0 && `• ${allocation.sessionsCount} Session${allocation.sessionsCount > 1 ? 's' : ''}`}
                     {allocation.casesCompleted !== undefined && allocation.sessionsCount > 0 && (
                       <span className="ml-1 text-blue-600 font-medium">
@@ -1155,7 +1155,7 @@ export default function DashboardView() {
                         {/* Single row layout for both mobile and desktop */}
                         <div className="flex items-center justify-between">
                           <div className="flex items-center flex-1 min-w-0">
-                            <span className={`text-[10px] mr-1 min-w-[70px] flex-shrink-0 ${staff.name === 'VACANT' ? 'text-gray-400' : 'text-gray-500'}`}>
+                            <span className={`text-[10px] mr-1 min-w-[70px] flex-shrink-0 ${staff.name === 'VACANT' ? 'text-gray-400' : 'text-gray-900'}`}>
                               <span className="lg:hidden">{label}:</span>
                               <span className="hidden lg:inline">{staff.fullLabel || label}:</span>
                             </span>
@@ -1178,7 +1178,7 @@ export default function DashboardView() {
                                 </span>
                               {staff.scrubbed && (
                                 <span
-                                  className="italic text-[9px] text-gray-500 flex-shrink-0"
+                                  className="italic text-[9px] text-gray-900 flex-shrink-0"
                                   title={
                                     staff.etf
                                       ? `ETF: Approx ${staff.etf} (${calculateDuration(allocation.surgeryStartTime || '08:00', staff.etf)} duration)${
@@ -1208,7 +1208,7 @@ export default function DashboardView() {
                           )}
                           </div>
                           {staff.shift && staff.name !== 'VACANT' && (
-                            <span className={`text-xs sm:text-[9px] text-gray-500 sm:text-gray-400 sm:ml-1 flex-shrink-0 ${
+                            <span className={`text-xs sm:text-[9px] text-gray-900 sm:ml-1 flex-shrink-0 ${
                               needsReliefHighlight ? 'text-orange-500 font-medium' : ''
                             }`}>
                               {staff.shift}
