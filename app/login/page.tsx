@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Lock, User, Eye, EyeOff } from 'lucide-react';
+import { User, Eye, EyeOff } from 'lucide-react';
+import Image from 'next/image';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -10,6 +11,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [authenticated, setAuthenticated] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,8 +30,11 @@ export default function LoginPage() {
       const data = await response.json();
 
       if (data.success) {
-        // Redirect to dashboard
-        router.push('/');
+        setAuthenticated(true);
+        // Wait for animation to complete before redirecting
+        setTimeout(() => {
+          router.push('/');
+        }, 1000);
       } else {
         setError(data.message || 'Invalid username or password. Please try again.');
         setLoading(false);
@@ -41,40 +46,91 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-blue-950 flex items-center justify-center p-4">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)',
-          backgroundSize: '40px 40px'
-        }}></div>
-      </div>
+    <div className="min-h-screen flex items-center justify-center p-4" style={{
+      backgroundColor: '#0b0d10',
+      fontFamily: 'Manrope, system-ui, -apple-system, sans-serif'
+    }}>
+      <style jsx>{`
+        @keyframes logoSpinOnce {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        .spin-once {
+          animation: logoSpinOnce 1s ease-in-out;
+        }
+      `}</style>
 
-      {/* Login Card */}
-      <div className="relative w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-2xl p-8">
-          {/* Header */}
+      <div className="w-full max-w-md">
+        {/* Login Card */}
+        <div className="rounded-2xl p-8" style={{
+          background: 'rgba(255,255,255,.02)',
+          border: '1px solid #1e2430',
+          boxShadow: '0 14px 30px rgba(0,0,0,.45)'
+        }}>
+          {/* Header with Logo */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Lock className="w-8 h-8 text-white" />
+            <div className={`inline-flex items-center justify-center w-24 h-24 rounded-full mb-4 ${authenticated ? 'spin-once' : ''}`} style={{
+              background: 'linear-gradient(135deg, #14b8a6 0%, #3b82f6 100%)',
+              boxShadow: '0 10px 24px rgba(20,184,166,.25), 0 8px 22px rgba(59,130,246,.18)',
+              padding: '8px'
+            }}>
+              <div style={{
+                width: '100%',
+                height: '100%',
+                borderRadius: '50%',
+                backgroundColor: '#0b0d10',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '8px'
+              }}>
+                <Image
+                  src="/medaskca-logo.png"
+                  alt="MEDASKCA Logo"
+                  width={80}
+                  height={80}
+                  style={{ objectFit: 'contain' }}
+                />
+              </div>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            <h1 className="text-2xl font-bold mb-2" style={{
+              color: '#eaf0f6',
+              fontWeight: 800,
+              letterSpacing: '-0.02em'
+            }}>
               <span className="font-bold">TOM</span> by <span className="font-bold">MEDASKCA™</span>
             </h1>
-            <p className="text-sm text-gray-600">Theatre Operations Manager</p>
-            <p className="text-xs text-gray-500 mt-1 italic">Demo for NHS Clinical Entrepreneur Programme</p>
+            <p className="text-sm" style={{ color: '#b9c4d2' }}>Theatre Operations Manager</p>
+            <p className="text-xs italic mt-1" style={{ color: '#b9c4d2', opacity: 0.8 }}>Demo for NHS Clinical Entrepreneur Programme</p>
           </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mb-6 p-4 rounded-lg" style={{
+              background: 'rgba(239, 68, 68, 0.1)',
+              border: '1px solid rgba(239, 68, 68, 0.3)'
+            }}>
+              <p className="text-sm text-center" style={{ color: '#fca5a5' }}>{error}</p>
+            </div>
+          )}
 
           {/* Login Form */}
           <form onSubmit={handleLogin} className="space-y-6">
-            {/* Username */}
+            {/* Username Field */}
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="username" className="block text-sm font-medium mb-2" style={{
+                color: '#eaf0f6',
+                fontWeight: 600
+              }}>
                 Username
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-gray-400" />
+                  <User className="h-5 w-5" style={{ color: '#b9c4d2' }} />
                 </div>
                 <input
                   id="username"
@@ -82,29 +138,45 @@ export default function LoginPage() {
                   required
                   value={credentials.username}
                   onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                  className="block w-full pl-10 pr-3 py-3 rounded-lg transition-all duration-150"
+                  style={{
+                    background: '#0e1116',
+                    border: '1px solid #1e2430',
+                    color: '#eaf0f6',
+                    outline: 'none'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#14b8a6'}
+                  onBlur={(e) => e.target.style.borderColor = '#1e2430'}
                   placeholder="Enter your username"
                   disabled={loading}
                 />
               </div>
             </div>
 
-            {/* Password */}
+            {/* Password Field */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium mb-2" style={{
+                color: '#eaf0f6',
+                fontWeight: 600
+              }}>
                 Password
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
-                </div>
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
                   required
                   value={credentials.password}
                   onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
-                  className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                  className="block w-full pl-3 pr-12 py-3 rounded-lg transition-all duration-150"
+                  style={{
+                    background: '#0e1116',
+                    border: '1px solid #1e2430',
+                    color: '#eaf0f6',
+                    outline: 'none'
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = '#14b8a6'}
+                  onBlur={(e) => e.target.style.borderColor = '#1e2430'}
                   placeholder="Enter your password"
                   disabled={loading}
                 />
@@ -112,72 +184,104 @@ export default function LoginPage() {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                  disabled={loading}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    <EyeOff className="h-5 w-5 transition-colors" style={{ color: '#b9c4d2' }} />
                   ) : (
-                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                    <Eye className="h-5 w-5 transition-colors" style={{ color: '#b9c4d2' }} />
                   )}
                 </button>
               </div>
             </div>
 
-            {/* Error Message */}
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-                {error}
-              </div>
-            )}
-
-            {/* Submit Button */}
+            {/* Login Button */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full font-semibold py-3 px-4 rounded-full transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                background: 'linear-gradient(135deg, #14b8a6 0%, #3b82f6 100%)',
+                color: '#061018',
+                fontWeight: 800,
+                boxShadow: '0 10px 24px rgba(20,184,166,.25), 0 8px 22px rgba(59,130,246,.18)',
+                border: 'none'
+              }}
+              onMouseEnter={(e) => {
+                if (!loading) {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 14px 28px rgba(20,184,166,.3), 0 10px 26px rgba(59,130,246,.22)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 10px 24px rgba(20,184,166,.25), 0 8px 22px rgba(59,130,246,.18)';
+              }}
             >
-              {loading ? (
-                <span className="flex items-center justify-center">
-                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  Authenticating...
-                </span>
-              ) : (
-                'Sign In to TOM'
-              )}
+              {loading ? 'Authenticating...' : 'Sign In'}
             </button>
           </form>
 
-          {/* Demo Credentials Info */}
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-xs font-semibold text-blue-900 mb-2">Demo Access Credentials:</p>
-            <div className="space-y-1 text-xs text-blue-800">
-              <p><span className="font-mono bg-white px-2 py-1 rounded">demo</span> / <span className="font-mono bg-white px-2 py-1 rounded">nhscep2025</span></p>
-              <p><span className="font-mono bg-white px-2 py-1 rounded">admin</span> / <span className="font-mono bg-white px-2 py-1 rounded">medaskca2025</span></p>
+          {/* Demo Credentials */}
+          <div className="mt-8 pt-6" style={{ borderTop: '1px solid #1e2430' }}>
+            <p className="text-xs font-medium mb-3 text-center" style={{
+              color: '#eaf0f6',
+              fontWeight: 600
+            }}>Demo Credentials:</p>
+            <div className="space-y-2 text-xs" style={{ color: '#b9c4d2' }}>
+              <div className="p-3 rounded-lg" style={{
+                background: 'rgba(255,255,255,.02)',
+                border: '1px solid #1e2430'
+              }}>
+                <p className="font-medium" style={{ color: '#eaf0f6', fontWeight: 600 }}>Viewer Access:</p>
+                <p>Username: <span className="font-mono px-2 py-1 rounded" style={{
+                  background: '#0e1116',
+                  color: '#14b8a6'
+                }}>demo</span></p>
+                <p>Password: <span className="font-mono px-2 py-1 rounded" style={{
+                  background: '#0e1116',
+                  color: '#14b8a6'
+                }}>nhscep2025</span></p>
+              </div>
+              <div className="p-3 rounded-lg" style={{
+                background: 'rgba(255,255,255,.02)',
+                border: '1px solid #1e2430'
+              }}>
+                <p className="font-medium" style={{ color: '#eaf0f6', fontWeight: 600 }}>Admin Access:</p>
+                <p>Username: <span className="font-mono px-2 py-1 rounded" style={{
+                  background: '#0e1116',
+                  color: '#14b8a6'
+                }}>admin</span></p>
+                <p>Password: <span className="font-mono px-2 py-1 rounded" style={{
+                  background: '#0e1116',
+                  color: '#14b8a6'
+                }}>medaskca2025</span></p>
+              </div>
+              <div className="p-3 rounded-lg" style={{
+                background: 'rgba(255,255,255,.02)',
+                border: '1px solid #1e2430'
+              }}>
+                <p className="font-medium" style={{ color: '#eaf0f6', fontWeight: 600 }}>Manager Access:</p>
+                <p>Username: <span className="font-mono px-2 py-1 rounded" style={{
+                  background: '#0e1116',
+                  color: '#14b8a6'
+                }}>theatremanager</span></p>
+                <p>Password: <span className="font-mono px-2 py-1 rounded" style={{
+                  background: '#0e1116',
+                  color: '#14b8a6'
+                }}>tom2025</span></p>
+              </div>
             </div>
           </div>
-
-          {/* Footer */}
-          <div className="mt-6 text-center">
-            <p className="text-xs text-gray-500">
-              Secure access to Theatre Operations Manager
-            </p>
-            <p className="text-xs text-gray-400 mt-1">
-              © 2025 MEDASKCA™ - All rights reserved
-            </p>
-          </div>
         </div>
 
-        {/* Request Access Link */}
-        <div className="mt-4 text-center">
-          <a
-            href="https://medaskca.com"
-            className="text-sm text-white hover:text-blue-200 transition-colors"
-          >
-            Don't have access? Request from medaskca.com →
-          </a>
-        </div>
+        {/* Footer */}
+        <p className="text-center text-sm mt-6" style={{
+          color: '#b9c4d2',
+          opacity: 0.8
+        }}>
+          Secure access to Theatre Operations Manager
+        </p>
       </div>
     </div>
   );
