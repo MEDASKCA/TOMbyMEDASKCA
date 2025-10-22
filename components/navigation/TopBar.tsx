@@ -51,8 +51,9 @@ export default function TopBar({ activeTab, setActiveTab }: TopBarProps) {
 
             {/* Logo/Title */}
             <div className="min-w-0 flex-1">
-              <h1 className="text-sm sm:text-xl font-bold truncate">Theatre Operations Manager</h1>
-              <p className="text-[10px] sm:text-xs text-blue-200 hidden sm:block">Demo for NHS Clinical Entrepreneur Programme</p>
+              <h1 className="text-sm sm:text-xl font-bold truncate"><span className="font-bold">TOM</span> by <span className="font-bold">MEDASKCA™</span></h1>
+              <p className="text-xs sm:text-sm text-blue-200">Theatre Operations Manager</p>
+              <p className="text-[10px] sm:text-xs text-blue-300 italic hidden sm:block">Demo for NHS Clinical Entrepreneur Programme</p>
             </div>
           </div>
 
