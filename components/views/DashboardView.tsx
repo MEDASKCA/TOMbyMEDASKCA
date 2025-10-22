@@ -892,15 +892,15 @@ export default function DashboardView() {
         {/* Title */}
         <div className="mb-3 flex items-start justify-between">
           <div className="flex-1">
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Operations Dashboard</h1>
-            <p className="text-xs sm:text-sm text-gray-600 mt-1">Real-time theatre management and monitoring</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Operations Dashboard</h1>
+            <p className="text-xs sm:text-sm text-gray-900 mt-1">Real-time theatre management and monitoring</p>
             {/* Date and Time Display */}
             <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:space-x-4 text-xs sm:text-sm">
-              <div className="flex items-center space-x-2 text-gray-700">
+              <div className="flex items-center space-x-2 text-gray-900">
                 <Calendar className="w-4 h-4 text-blue-600" />
                 <span className="font-medium">{formatDateTime().date}</span>
               </div>
-              <div className="flex items-center space-x-2 text-gray-700 mt-1 sm:mt-0">
+              <div className="flex items-center space-x-2 text-gray-900 mt-1 sm:mt-0">
                 <Clock className="w-4 h-4 text-blue-600" />
                 <span className="font-mono font-semibold">{formatDateTime().time}</span>
               </div>
@@ -920,7 +920,7 @@ export default function DashboardView() {
             className={`px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
               selectedUnit === 'all'
                 ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
             }`}
           >
             <span className="sm:hidden">All</span>
@@ -931,7 +931,7 @@ export default function DashboardView() {
             className={`px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
               selectedUnit === 'main'
                 ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
             }`}
           >
             <span className="sm:hidden">Main</span>
@@ -942,7 +942,7 @@ export default function DashboardView() {
             className={`px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
               selectedUnit === 'acad'
                 ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
             }`}
           >
             <span className="sm:hidden">DSU</span>
@@ -953,7 +953,7 @@ export default function DashboardView() {
             className={`px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
               selectedUnit === 'recovery'
                 ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
             }`}
           >
             <span className="sm:hidden">Recovery</span>
