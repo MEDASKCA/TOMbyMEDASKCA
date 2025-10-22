@@ -278,8 +278,8 @@ export default function EfficiencyScoreModal({ isOpen, onClose }: EfficiencyScor
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-100 bg-opacity-95 flex items-center justify-center lg:p-4 z-50">
-      <div className="bg-white lg:rounded-lg shadow-xl max-w-[95vw] w-full h-full lg:max-h-[90vh] overflow-hidden flex flex-col">
+    <div className="fixed inset-0 bg-gray-100 bg-opacity-95 flex items-center justify-center z-50">
+      <div className="bg-white shadow-xl w-full h-full overflow-hidden flex flex-col">
         {/* Header */}
         <div className="bg-gradient-to-r from-orange-600 to-orange-700 text-white p-3 flex items-center justify-between flex-shrink-0">
           <div>
@@ -362,7 +362,7 @@ export default function EfficiencyScoreModal({ isOpen, onClose }: EfficiencyScor
             </div>
 
             {/* Theatre List - Scrollable */}
-            <div className="flex-1 overflow-y-auto p-3">
+            <div className="flex-1 overflow-y-auto">
               <div className="space-y-3">
                 {filteredTheatres.map((theatre) => (
                   <div

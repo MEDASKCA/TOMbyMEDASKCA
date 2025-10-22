@@ -886,7 +886,7 @@ export default function DashboardView() {
   const staffDelayed = getStaffDelayed();
 
   return (
-    <div className="p-2 sm:p-6">
+    <div className="p-2 lg:p-0">
       {/* Page Header */}
       <div className="mb-4 sm:mb-6">
         {/* Title */}

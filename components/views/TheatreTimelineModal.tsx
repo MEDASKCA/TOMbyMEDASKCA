@@ -157,8 +157,8 @@ export default function TheatreTimelineModal({ isOpen, onClose, theatre, date = 
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-100 bg-opacity-95 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 bg-gray-100 bg-opacity-95 flex items-center justify-center z-50">
+      <div className="bg-white shadow-xl w-full h-full overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 flex items-center justify-between">
           <div>
