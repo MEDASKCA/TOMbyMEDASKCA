@@ -16,8 +16,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TOM - Theatre Operations Manager",
+  title: "TOM by MEDASKCA™",
   description: "Intelligent theatre operations management for NHS trusts - combining roster, inventory, and procedure management",
+  icons: {
+    icon: '/medaskca-logo.png',
+    apple: '/medaskca-logo.png',
+  },
 };
 
 export const viewport = {
