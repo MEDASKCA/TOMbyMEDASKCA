@@ -125,7 +125,7 @@ export default function LoginPage() {
                 color: '#eaf0f6',
                 fontWeight: 600
               }}>
-                Select Demo User
+                Username
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -146,7 +146,7 @@ export default function LoginPage() {
                   }}
                   onFocus={(e) => e.target.style.borderColor = '#14b8a6'}
                   onBlur={(e) => e.target.style.borderColor = '#1e2430'}
-                  placeholder="Enter username (demo, admin, or theatremanager)"
+                  placeholder="Enter your username"
                   disabled={loading}
                 />
               </div>
@@ -179,45 +179,6 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Demo Credentials */}
-          <div className="mt-8 pt-6" style={{ borderTop: '1px solid #1e2430' }}>
-            <p className="text-xs font-medium mb-3 text-center" style={{
-              color: '#eaf0f6',
-              fontWeight: 600
-            }}>Available Demo Users:</p>
-            <div className="space-y-2 text-xs" style={{ color: '#b9c4d2' }}>
-              <div className="p-3 rounded-lg" style={{
-                background: 'rgba(255,255,255,.02)',
-                border: '1px solid #1e2430'
-              }}>
-                <p className="font-medium" style={{ color: '#eaf0f6', fontWeight: 600 }}>Viewer Access</p>
-                <p>Username: <span className="font-mono px-2 py-1 rounded" style={{
-                  background: '#0e1116',
-                  color: '#14b8a6'
-                }}>demo</span></p>
-              </div>
-              <div className="p-3 rounded-lg" style={{
-                background: 'rgba(255,255,255,.02)',
-                border: '1px solid #1e2430'
-              }}>
-                <p className="font-medium" style={{ color: '#eaf0f6', fontWeight: 600 }}>Admin Access</p>
-                <p>Username: <span className="font-mono px-2 py-1 rounded" style={{
-                  background: '#0e1116',
-                  color: '#14b8a6'
-                }}>admin</span></p>
-              </div>
-              <div className="p-3 rounded-lg" style={{
-                background: 'rgba(255,255,255,.02)',
-                border: '1px solid #1e2430'
-              }}>
-                <p className="font-medium" style={{ color: '#eaf0f6', fontWeight: 600 }}>Manager Access</p>
-                <p>Username: <span className="font-mono px-2 py-1 rounded" style={{
-                  background: '#0e1116',
-                  color: '#14b8a6'
-                }}>theatremanager</span></p>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Footer */}
