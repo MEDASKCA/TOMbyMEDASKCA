@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { seedAllData } from '@/lib/firebase/seed';
 
-// Static export configuration for GitHub Pages, dynamic for Vercel
-export const dynamic = process.env.GITHUB_ACTIONS === 'true' ? 'force-static' : 'force-dynamic';
+// Force dynamic rendering for API route
+export const dynamic = 'force-dynamic';
 
 /**
  * API endpoint to seed the database

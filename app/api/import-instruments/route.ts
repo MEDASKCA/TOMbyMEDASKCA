@@ -3,8 +3,8 @@ import { collection, writeBatch, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 import { COLLECTIONS, InventoryItem } from '@/types/tom';
 
-// Static export configuration for GitHub Pages, dynamic for Vercel
-export const dynamic = process.env.GITHUB_ACTIONS === 'true' ? 'force-static' : 'force-dynamic';
+// Force dynamic rendering for API route
+export const dynamic = 'force-dynamic';
 
 export async function POST(request: NextRequest) {
   try {
