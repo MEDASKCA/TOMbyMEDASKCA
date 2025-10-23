@@ -35,6 +35,15 @@ jobs:
         run: npm run build
         env:
           NODE_ENV: production
+          NEXT_PUBLIC_FIREBASE_API_KEY: AIzaSyA8_xzxNFMAUWZ9Oc8SHkNoE9WExhI-sfE
+          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: projectsocial-78d85.firebaseapp.com
+          NEXT_PUBLIC_FIREBASE_PROJECT_ID: projectsocial-78d85
+          NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: projectsocial-78d85.firebasestorage.app
+          NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: 151855352255
+          NEXT_PUBLIC_FIREBASE_APP_ID: 1:151855352255:web:8e838a5e205924ab90390a
+          NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: G-ZE682WX227
+          NEXT_PUBLIC_AZURE_CLIENT_ID: 8bf25c98-99b9-4e49-886d-f5073428011c
+          NEXT_PUBLIC_AZURE_TENANT_ID: 204a7018-a216-4ae0-95cf-f30fc906e1c7
 
       - name: Add .nojekyll file
         run: touch out/.nojekyll
