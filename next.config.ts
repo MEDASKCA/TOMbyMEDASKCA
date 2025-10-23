@@ -1,17 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Vercel deployment - Server-side features enabled
-  // No 'output: export' needed for Vercel (enables API routes, middleware)
+  // GitHub Pages deployment settings
+  output: 'export',
+  basePath: '/TOMbyMEDASKCA',
 
-  // Image optimization settings
+  // Image optimization settings (must use unoptimized for static export)
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
-    ],
+    unoptimized: true,
   },
 
   // Disable ESLint during build (we'll fix linting issues later)

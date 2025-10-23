@@ -1,0 +1,77 @@
+{
+  "source": "Synergy Trak - Royal London Hospital",
+  "extractedDate": "2025-10-22",
+  "totalTrays": 10,
+  "instruments": [
+    {
+      "name": "RLH PHACO: HANDPIECE STELLARIS (ZE1030) S/N 1275 BL3170 31602",
+      "specialty": "Ophthalmology",
+      "location": "RLH DAY CARE THEATRES",
+      "quantity": 1,
+      "status": "available",
+      "notes": "Instance: U02931TR0755121001, Ref: U029310755121, Turnaround: 299656236",
+      "facility": "Royal London Hospital SSD",
+      "trayType": "Tray"
+    },
+    {
+      "name": "RLH DUET HANDLES (ZE8457)",
+      "specialty": "General Surgery",
+      "location": "RLH DAY CARE THEATRES",
+      "quantity": 3,
+      "status": "available",
+      "notes": "Multiple instances: U02931TR1021966002/001/003",
+      "facility": "Royal London Hospital SSD",
+      "trayType": "Tray"
+    },
+    {
+      "name": "RLH LOAN IP2 V40 TRIAL HEADS (ZL2895) STRYKER",
+      "specialty": "Orthopaedic",
+      "location": "RLH ADULT IN-PATIENT THEATRES",
+      "quantity": 1,
+      "status": "available",
+      "notes": "Loan Tray - Instance: U02931LT0967695002, Turnaround: 280067362",
+      "facility": "Royal London Hospital SSD",
+      "trayType": "Loan Tray"
+    },
+    {
+      "name": "BI-POLAR PACK (ZO1002)",
+      "specialty": "General Surgery",
+      "location": "RLH DAY CARE THEATRES",
+      "quantity": 2,
+      "status": "available",
+      "notes": "Ref: BO049659, Multiple instances",
+      "facility": "Royal London Hospital SSD",
+      "trayType": "Tray"
+    },
+    {
+      "name": "FORCEPS DUCKLING LEFT 012046 (SR6600) ORTHOPAEDIC",
+      "specialty": "Orthopaedic",
+      "location": "RLH ADULT IN-PATIENT THEATRES",
+      "quantity": 1,
+      "status": "available",
+      "notes": "Supplementary - Instance: BN050054002, Turnaround: 293420161",
+      "facility": "Royal London Hospital SSD",
+      "trayType": "Supplementary"
+    },
+    {
+      "name": "RLH CYSTOSCOPY STORZ TRAY (ZT1001)",
+      "specialty": "Urology",
+      "location": "RLH DAY CARE THEATRES",
+      "quantity": 1,
+      "status": "available",
+      "notes": "Instance: 1506049401, Ref: BO048784, Turnaround: 297991445",
+      "facility": "Royal London Hospital SSD",
+      "trayType": "Tray"
+    },
+    {
+      "name": "RLH LAPAROSCOPY DIAGN: 5 MM (ZG1037)",
+      "specialty": "General Surgery",
+      "location": "RLH DAY CARE THEATRES",
+      "quantity": 1,
+      "status": "available",
+      "notes": "Instance: 1506052201, Ref: BO049885, Turnaround: 299339708",
+      "facility": "Royal London Hospital SSD",
+      "trayType": "Tray"
+    }
+  ]
+}

@@ -53,19 +53,16 @@ export default function DashboardView() {
     return () => clearInterval(timer);
   }, []);
 
-  // Format date and time - using October 21, 2024 as the base date
+  // Format date and time - using current date
   const formatDateTime = () => {
-    const baseDate = new Date(2024, 9, 21); // October 21, 2024
-    const time = currentTime;
-
-    const dateStr = baseDate.toLocaleDateString('en-GB', {
+    const dateStr = currentTime.toLocaleDateString('en-GB', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     });
 
-    const timeStr = time.toLocaleTimeString('en-GB', {
+    const timeStr = currentTime.toLocaleTimeString('en-GB', {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit'
@@ -886,9 +883,9 @@ export default function DashboardView() {
   const staffDelayed = getStaffDelayed();
 
   return (
-    <div className="p-2 lg:p-0">
+    <div className="h-full flex flex-col p-2 lg:p-4">
       {/* Page Header */}
-      <div className="mb-4 sm:mb-6">
+      <div className="mb-4 flex-shrink-0">
         {/* Title */}
         <div className="mb-3 flex items-start justify-between">
           <div className="flex-1">
@@ -963,7 +960,7 @@ export default function DashboardView() {
       </div>
 
       {/* Key Performance Metrics - Clickable Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4 flex-shrink-0">
         {/* Theatres Operational Card */}
         <div
           onClick={() => setShowTheatreOpsModal(true)}
@@ -1051,9 +1048,13 @@ export default function DashboardView() {
         </div>
       </div>
 
-      {/* Theatre Team Allocations - Full Width */}
-      {selectedUnit !== 'recovery' && (
-        <div className="bg-white border border-gray-200 rounded-lg p-5 mb-6">
+      {/* Two Panel Layout - Desktop: side-by-side, Mobile: stacked */}
+      <div className="flex-1 flex flex-col lg:flex-row gap-4 overflow-hidden">
+        {/* Left Panel - Theatre Operations */}
+        <div className="flex-1 overflow-y-auto">
+          {/* Theatre Team Allocations */}
+          {selectedUnit !== 'recovery' && (
+            <div className="bg-white border border-gray-200 rounded-lg p-5 mb-6">
           <h2 className="text-lg font-semibold text-gray-800 mb-2 flex items-center">
             <Users className="w-5 h-5 mr-2 text-blue-600" />
             {selectedUnit === 'all' && (
@@ -1347,15 +1348,17 @@ export default function DashboardView() {
           </div>
         </div>
       )}
+        </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Critical Alerts */}
-        <div className="bg-white border border-gray-200 rounded-lg p-5">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-            <AlertTriangle className="w-5 h-5 mr-2 text-red-600" />
-            Critical Alerts
-          </h2>
-          <div className="space-y-3">
+        {/* Right Panel - Information Cards (Mobile: full width, Desktop: fixed 384px) */}
+        <div className="w-full lg:w-96 flex flex-col gap-4 overflow-y-auto">
+          {/* Critical Alerts */}
+          <div className="bg-white border border-gray-200 rounded-lg p-5">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <AlertTriangle className="w-5 h-5 mr-2 text-red-600" />
+              Critical Alerts
+            </h2>
+            <div className="space-y-3">
             <div className="p-3 bg-red-50 border-l-4 border-red-500 rounded">
               <div className="flex items-start">
                 <XCircle className="w-4 h-4 text-red-600 mt-0.5 mr-2 flex-shrink-0" />
@@ -1403,13 +1406,13 @@ export default function DashboardView() {
           </div>
         </div>
 
-        {/* Upcoming Cases */}
-        <div className="bg-white border border-gray-200 rounded-lg p-5">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-            <Calendar className="w-5 h-5 mr-2 text-purple-600" />
-            Upcoming Cases
-          </h2>
-          <div className="space-y-3">
+          {/* Upcoming Cases */}
+          <div className="bg-white border border-gray-200 rounded-lg p-5">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <Calendar className="w-5 h-5 mr-2 text-purple-600" />
+              Upcoming Cases
+            </h2>
+            <div className="space-y-3">
             {[
               { time: '14:00', procedure: 'Total Knee Replacement', surgeon: 'Mr. Johnson', theatre: 'Theatre 1', duration: '2h' },
               { time: '14:30', procedure: 'Cholecystectomy', surgeon: 'Ms. Chen', theatre: 'Theatre 2', duration: '1h 30m' },
@@ -1434,35 +1437,36 @@ export default function DashboardView() {
           </div>
         </div>
 
-        {/* Critical Equipment Status */}
-        <div className="bg-white border border-gray-200 rounded-lg p-5">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-            <Package className="w-5 h-5 mr-2 text-green-600" />
-            Critical Equipment Status
-          </h2>
-          <div className="space-y-3">
-            {[
-              { item: 'Anaesthesia Machines', available: 26, total: 30, status: 'good' },
-              { item: 'C-Arms', available: 8, total: 10, status: 'good' },
-              { item: 'Laparoscopic Towers', available: 12, total: 15, status: 'good' },
-              { item: 'Microscopes', available: 5, total: 8, status: 'limited' },
-              { item: 'Da Vinci Robots', available: 2, total: 2, status: 'optimal' },
-              { item: 'Hybrid Lab Equipment', available: 1, total: 1, status: 'optimal' },
-            ].map((equipment, idx) => (
-              <div key={idx} className="flex items-center justify-between">
-                <span className="text-sm">{equipment.item}</span>
-                <div className="flex items-center space-x-2">
-                  <span className="text-xs text-gray-600">{equipment.available}/{equipment.total}</span>
-                  <span className={`text-xs px-2 py-0.5 rounded ${
-                    equipment.status === 'optimal' ? 'bg-green-100 text-green-700' :
-                    equipment.status === 'good' ? 'bg-blue-100 text-blue-700' :
-                    'bg-yellow-100 text-yellow-700'
-                  }`}>
-                    {equipment.status}
-                  </span>
+          {/* Critical Equipment Status */}
+          <div className="bg-white border border-gray-200 rounded-lg p-5">
+            <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <Package className="w-5 h-5 mr-2 text-green-600" />
+              Critical Equipment Status
+            </h2>
+            <div className="space-y-3">
+              {[
+                { item: 'Anaesthesia Machines', available: 26, total: 30, status: 'good' },
+                { item: 'C-Arms', available: 8, total: 10, status: 'good' },
+                { item: 'Laparoscopic Towers', available: 12, total: 15, status: 'good' },
+                { item: 'Microscopes', available: 5, total: 8, status: 'limited' },
+                { item: 'Da Vinci Robots', available: 2, total: 2, status: 'optimal' },
+                { item: 'Hybrid Lab Equipment', available: 1, total: 1, status: 'optimal' },
+              ].map((equipment, idx) => (
+                <div key={idx} className="flex items-center justify-between">
+                  <span className="text-sm">{equipment.item}</span>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs text-gray-600">{equipment.available}/{equipment.total}</span>
+                    <span className={`text-xs px-2 py-0.5 rounded ${
+                      equipment.status === 'optimal' ? 'bg-green-100 text-green-700' :
+                      equipment.status === 'good' ? 'bg-blue-100 text-blue-700' :
+                      'bg-yellow-100 text-yellow-700'
+                    }`}>
+                      {equipment.status}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>

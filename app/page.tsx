@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import TopBar from '@/components/navigation/TopBar';
 import DashboardView from '@/components/views/DashboardView';
 import TheatreScheduleView from '@/components/views/TheatreScheduleView';
+import DesktopRoster from '@/features/roster/components/DesktopRoster';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -15,14 +16,7 @@ export default function Home() {
       case 'schedule':
         return <TheatreScheduleView />;
       case 'roster':
-        return (
-          <div className="flex items-center justify-center h-96">
-            <div className="text-center">
-              <h2 className="text-2xl font-semibold text-gray-700 mb-2">Staff Roster</h2>
-              <p className="text-gray-500">Staff management coming soon</p>
-            </div>
-          </div>
-        );
+        return <DesktopRoster />;
       case 'inventory':
         return (
           <div className="flex items-center justify-center h-96">
@@ -64,6 +58,32 @@ export default function Home() {
     }
   };
 
+  // Full-screen layout for roster and dashboard tabs
+  if (activeTab === 'roster' || activeTab === 'dashboard') {
+    return (
+      <div className="h-screen w-screen flex flex-col overflow-hidden bg-gray-100">
+        {/* Rotation Prompt - Only shows on portrait mobile */}
+        <div className="lg:hidden portrait:flex landscape:hidden fixed inset-0 bg-blue-900 z-50 flex-col items-center justify-center p-8 text-white text-center">
+          <svg className="w-24 h-24 mb-6 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          <h2 className="text-2xl font-bold mb-4">Please Rotate Your Device</h2>
+          <p className="text-lg opacity-90">This application is optimized for landscape orientation</p>
+          <p className="text-sm mt-4 opacity-75">Turn your phone sideways for the best experience</p>
+        </div>
+
+        {/* TopBar Navigation */}
+        <TopBar activeTab={activeTab} setActiveTab={setActiveTab} />
+
+        {/* Main Content */}
+        <div className="flex-1 overflow-hidden">
+          {activeTab === 'roster' ? <DesktopRoster /> : <DashboardView />}
+        </div>
+      </div>
+    );
+  }
+
+  // Standard layout for other tabs
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       {/* Rotation Prompt - Only shows on portrait mobile */}
