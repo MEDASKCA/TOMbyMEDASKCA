@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
-// Static export configuration
-export const dynamic = 'force-static';
+// Static export configuration for GitHub Pages, dynamic for Vercel
+export const dynamic = process.env.GITHUB_ACTIONS === 'true' ? 'force-static' : 'force-dynamic';
 
 export async function POST() {
   const response = NextResponse.json(
