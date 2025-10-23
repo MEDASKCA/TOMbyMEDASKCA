@@ -18,11 +18,13 @@ import {
   MessageCircle,
   ChevronDown,
   ChevronUp,
+  ChevronLeft,
   ChevronRight,
   MapPinned,
   Clock,
   Shield,
   Zap,
+  Calendar,
 } from 'lucide-react';
 import { db, isFirebaseConfigured } from '@/lib/firebase';
 import { collection, getDocs, query, limit } from 'firebase/firestore';
@@ -36,8 +38,6 @@ export default function DesktopRoster() {
   const [staffProfiles, setStaffProfiles] = useState<StaffProfile[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterRole, setFilterRole] = useState<string>('all');
-  const [filterSpecialty, setFilterSpecialty] = useState<string>('all');
   const [filterDateFrom, setFilterDateFrom] = useState<string>(''); // Date range start
   const [filterDateTo, setFilterDateTo] = useState<string>(''); // Date range end
   const [filterBookingStatus, setFilterBookingStatus] = useState<string>('all'); // Booking status filter
@@ -47,6 +47,16 @@ export default function DesktopRoster() {
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showFullProfile, setShowFullProfile] = useState(false);
+
+  // Mobile view states
+  const [mobileTab, setMobileTab] = useState<'staff' | 'inventory'>('staff');
+  const [selectedDates, setSelectedDates] = useState<Date[]>([]);
+  const [dateRangeStart, setDateRangeStart] = useState<Date | null>(null);
+  const [dateRangeEnd, setDateRangeEnd] = useState<Date | null>(null);
+  const [selectedShifts, setSelectedShifts] = useState<string[]>([]);
+  const [showMobileMap, setShowMobileMap] = useState(false);
+  const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+  const [currentMonth, setCurrentMonth] = useState(new Date());
 
   // Mock booking requests state (in production, this would come from Firebase)
   const [bookingRequests] = useState([
@@ -193,13 +203,10 @@ export default function DesktopRoster() {
           spec.toLowerCase().includes(searchQuery.toLowerCase())
         );
 
-      const matchesRole = filterRole === 'all' || staff.role === filterRole;
-      const matchesSpecialty = filterSpecialty === 'all' ||
-        staff.availability?.preferredSpecialties?.includes(filterSpecialty);
       const matchesDateRange = isAvailableInDateRange(staff, filterDateFrom, filterDateTo);
       const bookingStatus = getBookingStatus(staff.id);
       const matchesBookingStatus = filterBookingStatus === 'all' || bookingStatus === filterBookingStatus;
-      return matchesSearch && matchesRole && matchesSpecialty && matchesDateRange && matchesBookingStatus && staff.isActive;
+      return matchesSearch && matchesDateRange && matchesBookingStatus && staff.isActive;
     })
     .map((staff) => {
       if (userLocation && staff.location?.coordinates) {
@@ -220,19 +227,387 @@ export default function DesktopRoster() {
       return (b.performance?.rating || 0) - (a.performance?.rating || 0);
     });
 
-  const uniqueRoles = Array.from(new Set(staffProfiles.map((s) => s.role)));
-  const allSpecialties = Array.from(new Set(staffProfiles.flatMap((s) => s.availability?.preferredSpecialties || [])));
-
   // Handle staff selection
   const handleStaffSelect = (staff: StaffProfile) => {
     setSelectedStaff(staff);
     setDrawerOpen(true);
   };
 
+  // Shift patterns
+  const shiftPatterns = [
+    { id: 'early', label: 'Early', time: '07:00-15:00', color: 'from-yellow-400 to-orange-400' },
+    { id: 'longday', label: 'Long Day', time: '07:00-20:00', color: 'from-blue-400 to-indigo-400' },
+    { id: 'twilight', label: 'Twilight', time: '14:00-22:00', color: 'from-purple-400 to-pink-400' },
+    { id: 'late', label: 'Late', time: '15:00-23:00', color: 'from-orange-400 to-red-400' },
+    { id: 'night', label: 'Night', time: '20:00-08:00', color: 'from-indigo-600 to-purple-600' },
+  ];
+
+  // Toggle shift selection
+  const toggleShift = (shiftId: string) => {
+    setSelectedShifts(prev =>
+      prev.includes(shiftId)
+        ? prev.filter(id => id !== shiftId)
+        : [...prev, shiftId]
+    );
+  };
+
+  // Handle date selection (supports range and multi-select)
+  const handleDateClick = (date: Date) => {
+    if (!dateRangeStart || (dateRangeStart && dateRangeEnd)) {
+      // Start new range
+      setDateRangeStart(date);
+      setDateRangeEnd(null);
+      setSelectedDates([date]);
+    } else {
+      // Complete range
+      setDateRangeEnd(date);
+      const start = dateRangeStart < date ? dateRangeStart : date;
+      const end = dateRangeStart < date ? date : dateRangeStart;
+      const datesInRange: Date[] = [];
+      const currentDate = new Date(start);
+      while (currentDate <= end) {
+        datesInRange.push(new Date(currentDate));
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+      setSelectedDates(datesInRange);
+    }
+  };
+
+  // Check if date is selected
+  const isDateSelected = (date: Date) => {
+    return selectedDates.some(d =>
+      d.getDate() === date.getDate() &&
+      d.getMonth() === date.getMonth() &&
+      d.getFullYear() === date.getFullYear()
+    );
+  };
+
+  // Generate calendar days
+  const generateCalendarDays = () => {
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const startDate = new Date(firstDay);
+    startDate.setDate(startDate.getDate() - startDate.getDay());
+    const endDate = new Date(lastDay);
+    endDate.setDate(endDate.getDate() + (6 - endDate.getDay()));
+
+    const days: Date[] = [];
+    const currentDate = new Date(startDate);
+    while (currentDate <= endDate) {
+      days.push(new Date(currentDate));
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return days;
+  };
+
+  // Handle search submission
+  const handleSearchSubmit = () => {
+    if (selectedDates.length > 0 && selectedShifts.length > 0) {
+      setShowMobileMap(true);
+    }
+  };
+
   return (
     <div className="h-full w-full flex bg-gray-50 overflow-hidden">
+      {/* Mobile View */}
+      <div className="md:hidden flex flex-col w-full h-full relative bg-white overflow-hidden">
+        {!showMobileMap ? (
+          <>
+            {/* Tabs - Staff | Inventory (Hidden after search) */}
+            <div className="flex bg-white border-b border-gray-200">
+              <button
+                onClick={() => setMobileTab('staff')}
+                className={`flex-1 py-4 text-center font-semibold transition-all relative ${
+                  mobileTab === 'staff' ? 'text-black' : 'text-gray-500'
+                }`}
+              >
+                Staff
+                {mobileTab === 'staff' && (
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-black"></div>
+                )}
+              </button>
+              <button
+                onClick={() => setMobileTab('inventory')}
+                className={`flex-1 py-4 text-center font-semibold transition-all relative ${
+                  mobileTab === 'inventory' ? 'text-black' : 'text-gray-500'
+                }`}
+              >
+                Inventory
+                {mobileTab === 'inventory' && (
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-black"></div>
+                )}
+              </button>
+            </div>
+
+            {/* Calendar and Filters */}
+            {mobileTab === 'staff' ? (
+              <div className="flex-1 overflow-y-auto">
+                {/* Calendar Header */}
+                <div className="p-4 bg-gray-50 border-b border-gray-200">
+                  <div className="flex items-center justify-between mb-4">
+                    <button
+                      onClick={() => {
+                        const newMonth = new Date(currentMonth);
+                        newMonth.setMonth(newMonth.getMonth() - 1);
+                        setCurrentMonth(newMonth);
+                      }}
+                      className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <h2 className="text-lg font-bold">
+                      {currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                    </h2>
+                    <button
+                      onClick={() => {
+                        const newMonth = new Date(currentMonth);
+                        newMonth.setMonth(newMonth.getMonth() + 1);
+                        setCurrentMonth(newMonth);
+                      }}
+                      className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  {/* Calendar Grid */}
+                  <div className="bg-white rounded-lg p-3">
+                    {/* Day headers */}
+                    <div className="grid grid-cols-7 gap-1 mb-2">
+                      {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                        <div key={day} className="text-center text-xs font-semibold text-gray-600 py-1">
+                          {day}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Calendar days */}
+                    <div className="grid grid-cols-7 gap-1">
+                      {generateCalendarDays().map((date, idx) => {
+                        const isCurrentMonth = date.getMonth() === currentMonth.getMonth();
+                        const isToday = date.toDateString() === new Date().toDateString();
+                        const isSelected = isDateSelected(date);
+
+                        return (
+                          <button
+                            key={idx}
+                            onClick={() => handleDateClick(date)}
+                            disabled={!isCurrentMonth}
+                            className={`aspect-square flex items-center justify-center text-sm rounded-lg transition-all ${
+                              !isCurrentMonth
+                                ? 'text-gray-300 cursor-not-allowed'
+                                : isSelected
+                                ? 'bg-black text-white font-bold'
+                                : isToday
+                                ? 'bg-blue-100 text-blue-700 font-semibold'
+                                : 'hover:bg-gray-100 text-gray-900'
+                            }`}
+                          >
+                            {date.getDate()}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Selected dates summary */}
+                  {selectedDates.length > 0 && (
+                    <div className="mt-3 p-3 bg-blue-50 rounded-lg">
+                      <p className="text-sm font-semibold text-blue-900">
+                        {selectedDates.length} date{selectedDates.length !== 1 ? 's' : ''} selected
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                {/* Shift Patterns */}
+                <div className="p-4">
+                  <h3 className="text-base font-bold text-gray-900 mb-3">Shift Patterns</h3>
+                  <div className="space-y-2">
+                    {shiftPatterns.map(shift => (
+                      <button
+                        key={shift.id}
+                        onClick={() => toggleShift(shift.id)}
+                        className={`w-full p-4 rounded-xl border-2 transition-all ${
+                          selectedShifts.includes(shift.id)
+                            ? 'border-black bg-gradient-to-r ' + shift.color + ' text-white'
+                            : 'border-gray-200 bg-white text-gray-900 hover:border-gray-300'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="text-left">
+                            <p className="font-bold">{shift.label}</p>
+                            <p className={`text-sm ${selectedShifts.includes(shift.id) ? 'text-white/80' : 'text-gray-600'}`}>
+                              {shift.time}
+                            </p>
+                          </div>
+                          {selectedShifts.includes(shift.id) && (
+                            <CheckCircle className="w-6 h-6" />
+                          )}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Search Button */}
+                {selectedDates.length > 0 && selectedShifts.length > 0 && (
+                  <div className="p-4 pb-20 bg-white border-t border-gray-200">
+                    <button
+                      onClick={handleSearchSubmit}
+                      className="w-full py-4 bg-black text-white rounded-full font-bold text-base hover:bg-gray-900 transition-colors shadow-lg"
+                    >
+                      Find Staff ({selectedDates.length} date{selectedDates.length !== 1 ? 's' : ''}, {selectedShifts.length} shift{selectedShifts.length !== 1 ? 's' : ''})
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* Inventory Tab (placeholder) */
+              <div className="flex-1 flex items-center justify-center p-6">
+                <div className="text-center">
+                  <Shield className="w-16 h-16 mx-auto mb-4 text-gray-300" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Inventory Coming Soon</h3>
+                  <p className="text-gray-600">Equipment and supplies tracking will be available here</p>
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          /* Map View with Staff Suggestions */
+          <div className="flex-1 relative">
+            {/* Map */}
+            <div className="absolute inset-0">
+              <MapView
+                staff={filteredStaff}
+                onSelectStaff={handleStaffSelect}
+                userLocation={userLocation}
+                selectedStaff={selectedStaff}
+              />
+            </div>
+
+            {/* Bottom Staff Suggestions */}
+            <div
+              className={`absolute left-0 right-0 bg-white rounded-t-3xl shadow-2xl transition-all duration-300 ease-out ${
+                mobileFilterOpen ? 'bottom-0 h-[70vh]' : 'bottom-0 h-48'
+              }`}
+            >
+              {/* Drag Handle */}
+              <div
+                className="w-full py-3 flex justify-center cursor-pointer"
+                onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
+              >
+                <div className="w-12 h-1.5 bg-gray-300 rounded-full"></div>
+              </div>
+
+              {/* Collapsed View - Staff Cards Horizontal Scroll */}
+              {!mobileFilterOpen && (
+                <div className="px-4 pb-4 overflow-x-auto">
+                  <div className="flex gap-3 pb-2">
+                    {filteredStaff.slice(0, 10).map((staff) => (
+                      <div
+                        key={staff.id}
+                        onClick={() => {
+                          handleStaffSelect(staff);
+                          setMobileFilterOpen(true);
+                        }}
+                        className="flex-shrink-0 w-64 p-4 bg-gradient-to-br from-gray-50 to-white rounded-xl border-2 border-gray-200 hover:border-black transition-all cursor-pointer"
+                      >
+                        <div className="flex items-start gap-3 mb-3">
+                          <div className="w-12 h-12 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                            {staff.name?.charAt(0) || 'S'}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-bold text-gray-900 truncate">{staff.name}</p>
+                            <p className="text-sm text-gray-600 truncate">{staff.role}</p>
+                          </div>
+                        </div>
+                        <div className="space-y-1">
+                          {staff.performance?.rating && (
+                            <div className="flex items-center gap-1">
+                              <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                              <span className="text-sm font-semibold">{staff.performance.rating.toFixed(1)}</span>
+                            </div>
+                          )}
+                          {staff.currentTrust && (
+                            <p className="text-xs text-gray-600 truncate">{staff.currentTrust}</p>
+                          )}
+                          {staff.distance && (
+                            <p className="text-xs text-gray-500">{staff.distance.toFixed(1)} km away</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Expanded View - Full Staff List */}
+              {mobileFilterOpen && (
+                <div className="overflow-y-auto h-[calc(100%-3rem)] px-4 pb-20">
+                  <div className="mb-4 flex items-center justify-between">
+                    <h3 className="font-bold text-xl">{filteredStaff.length} Staff Available</h3>
+                    <button
+                      onClick={() => {
+                        setShowMobileMap(false);
+                        setSelectedDates([]);
+                        setSelectedShifts([]);
+                        setDateRangeStart(null);
+                        setDateRangeEnd(null);
+                      }}
+                      className="px-4 py-2 bg-gray-100 rounded-full text-sm font-medium hover:bg-gray-200"
+                    >
+                      New Search
+                    </button>
+                  </div>
+
+                  <div className="space-y-3">
+                    {filteredStaff.map((staff) => (
+                      <div
+                        key={staff.id}
+                        onClick={() => handleStaffSelect(staff)}
+                        className="p-4 bg-white rounded-xl border-2 border-gray-200 hover:border-black transition-all cursor-pointer"
+                      >
+                        <div className="flex items-start gap-3 mb-3">
+                          <div className="w-14 h-14 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                            {staff.name?.charAt(0) || 'S'}
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-bold text-gray-900">{staff.name}</p>
+                            <p className="text-sm text-gray-600">{staff.role}</p>
+                            <p className="text-sm text-gray-600">{staff.band}</p>
+                          </div>
+                          {staff.distance && (
+                            <div className="text-right">
+                              <p className="text-sm font-semibold text-gray-900">{staff.distance.toFixed(1)} km</p>
+                              <p className="text-xs text-gray-500">away</p>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-4 text-sm">
+                          {staff.performance?.rating && (
+                            <div className="flex items-center gap-1">
+                              <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+                              <span className="font-semibold">{staff.performance.rating.toFixed(1)}</span>
+                            </div>
+                          )}
+                          {staff.currentTrust && (
+                            <p className="text-gray-600 truncate flex-1">{staff.currentTrust}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
       {/* Navigation Sidebar */}
-      <div className="w-64 bg-gradient-to-br from-teal-600 via-cyan-600 to-blue-600 text-white flex flex-col flex-shrink-0">
+      <div className="hidden md:flex w-64 bg-gradient-to-br from-teal-600 via-cyan-600 to-blue-600 text-white flex-col flex-shrink-0">
         <div className="p-6 border-b border-white/20">
           <h1 className="text-xl font-bold">Live Search</h1>
           <p className="text-sm text-teal-50 mt-1">Find Available Staff</p>
@@ -292,7 +667,7 @@ export default function DesktopRoster() {
       {activeSection === 'directory' && (
         <div className="flex-1 flex bg-gray-50">
           {/* Left Sidebar - Filters & Search */}
-          <div className="w-80 bg-white border-r border-gray-200 flex flex-col overflow-hidden">
+          <div className="hidden md:flex w-80 bg-white border-r border-gray-200 flex-col overflow-hidden">
         {/* Search Bar */}
         <div className="p-4 border-b border-gray-200">
           <div className="relative">
@@ -360,32 +735,6 @@ export default function DesktopRoster() {
                   Clear date range
                 </button>
               )}
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-2">Role</label>
-              <select
-                value={filterRole}
-                onChange={(e) => setFilterRole(e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-              >
-                <option value="all">All Roles</option>
-                {uniqueRoles.map((role) => (
-                  <option key={role} value={role}>{role}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-700 mb-2">Specialty</label>
-              <select
-                value={filterSpecialty}
-                onChange={(e) => setFilterSpecialty(e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-              >
-                <option value="all">All Specialties</option>
-                {allSpecialties.map((specialty) => (
-                  <option key={specialty} value={specialty}>{specialty}</option>
-                ))}
-              </select>
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-2">Booking Status</label>

@@ -14,9 +14,7 @@ import {
   AlertCircle,
   Coffee,
   UserCheck,
-  ChevronRight,
-  ChevronDown,
-  ChevronUp
+  ChevronRight
 } from 'lucide-react';
 import TheatreTimelineModal from './TheatreTimelineModal';
 import StaffReliefModal from './StaffReliefModal';
@@ -45,12 +43,6 @@ export default function DashboardView() {
 
   // Live clock state - synchronized with Theatre Schedule date (October 21, 2024)
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [mounted, setMounted] = useState(false);
-
-  // Prevent hydration mismatch
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Update clock every second
   React.useEffect(() => {
@@ -61,21 +53,19 @@ export default function DashboardView() {
     return () => clearInterval(timer);
   }, []);
 
-  // Format date and time - using current date
+  // Format date and time - using October 21, 2024 as the base date
   const formatDateTime = () => {
-    if (!mounted) {
-      // Return placeholder during server-side rendering
-      return { date: 'Loading...', time: '00:00:00' };
-    }
+    const baseDate = new Date(2024, 9, 21); // October 21, 2024
+    const time = currentTime;
 
-    const dateStr = currentTime.toLocaleDateString('en-GB', {
+    const dateStr = baseDate.toLocaleDateString('en-GB', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     });
 
-    const timeStr = currentTime.toLocaleTimeString('en-GB', {
+    const timeStr = time.toLocaleTimeString('en-GB', {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit'
@@ -896,155 +886,176 @@ export default function DashboardView() {
   const staffDelayed = getStaffDelayed();
 
   return (
-    <div className="h-full flex flex-col bg-gray-50">
-      {/* Top Info Bar - Date/Time and Live Status */}
-      <div className="bg-white border-b border-gray-200 px-3 py-2 flex items-center justify-between flex-shrink-0">
-        <div className="flex items-center gap-3 text-xs text-gray-600">
-          <div className="flex items-center gap-1">
-            <Calendar className="w-3 h-3 text-blue-600" />
-            <span className="hidden sm:inline">{formatDateTime().date}</span>
-            <span className="sm:hidden">{new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</span>
+    <div className="p-2 lg:p-0">
+      {/* Page Header */}
+      <div className="mb-4 sm:mb-6">
+        {/* Title */}
+        <div className="mb-3 flex items-start justify-between">
+          <div className="flex-1">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Operations Dashboard</h1>
+            <p className="text-xs sm:text-sm text-gray-900 mt-1">Real-time theatre management and monitoring</p>
+            {/* Date and Time Display */}
+            <div className="mt-2 flex flex-col sm:flex-row sm:items-center sm:space-x-4 text-xs sm:text-sm">
+              <div className="flex items-center space-x-2 text-gray-900">
+                <Calendar className="w-4 h-4 text-blue-600" />
+                <span className="font-medium">{formatDateTime().date}</span>
+              </div>
+              <div className="flex items-center space-x-2 text-gray-900 mt-1 sm:mt-0">
+                <Clock className="w-4 h-4 text-blue-600" />
+                <span className="font-mono font-semibold">{formatDateTime().time}</span>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center gap-1">
-            <Clock className="w-3 h-3 text-blue-600" />
-            <span className="font-mono">{formatDateTime().time}</span>
+          {/* Live Status Indicator */}
+          <div className="flex items-center space-x-2 bg-green-500/20 px-2 sm:px-3 py-1 rounded-full flex-shrink-0">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <span className="text-[10px] sm:text-sm text-green-700 font-medium">All Systems Operational</span>
           </div>
         </div>
-        <div className="flex items-center space-x-1 bg-green-500/20 px-2 py-1 rounded-full">
-          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-          <span className="text-xs text-green-700 font-semibold">Live</span>
-        </div>
-      </div>
 
-      {/* Unit Filter Buttons */}
-      <div className="bg-white border-b border-gray-200 px-3 py-2 flex-shrink-0">
-        <div className="grid grid-cols-4 gap-2">
+        {/* Unit Filter Buttons - Stack on mobile, inline on desktop */}
+        <div className="grid grid-cols-4 gap-2 sm:flex sm:gap-2 sm:justify-end">
           <button
             onClick={() => setSelectedUnit('all')}
-            className={`px-2 py-2 sm:px-6 sm:py-3 rounded-md text-xs sm:text-base font-semibold transition-all ${
+            className={`px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
               selectedUnit === 'all'
                 ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-900 border border-gray-300'
+                : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
             }`}
           >
-            All
+            <span className="sm:hidden">All</span>
+            <span className="hidden sm:inline">All Units</span>
           </button>
           <button
             onClick={() => setSelectedUnit('main')}
-            className={`px-2 py-2 sm:px-6 sm:py-3 rounded-md text-xs sm:text-base font-semibold transition-all ${
+            className={`px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
               selectedUnit === 'main'
                 ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-900 border border-gray-300'
+                : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
             }`}
           >
-            Main
+            <span className="sm:hidden">Main</span>
+            <span className="hidden sm:inline">Main Theatres</span>
           </button>
           <button
             onClick={() => setSelectedUnit('acad')}
-            className={`px-2 py-2 sm:px-6 sm:py-3 rounded-md text-xs sm:text-base font-semibold transition-all ${
+            className={`px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
               selectedUnit === 'acad'
                 ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-900 border border-gray-300'
+                : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
             }`}
           >
-            DSU
+            <span className="sm:hidden">DSU</span>
+            <span className="hidden sm:inline">DSU Theatres</span>
           </button>
           <button
             onClick={() => setSelectedUnit('recovery')}
-            className={`px-2 py-2 sm:px-6 sm:py-3 rounded-md text-xs sm:text-base font-semibold transition-all ${
+            className={`px-2 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
               selectedUnit === 'recovery'
                 ? 'bg-blue-600 text-white'
-                : 'bg-white text-gray-900 border border-gray-300'
+                : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
             }`}
           >
-            Rec
+            <span className="sm:hidden">Recovery</span>
+            <span className="hidden sm:inline">Recovery Areas</span>
           </button>
         </div>
       </div>
 
-      {/* Key Performance Metrics - Responsive: Larger on Desktop, Compact on Mobile */}
-      <div className="px-3 sm:px-6 pt-3 sm:pt-6">
-      <div className="grid grid-cols-4 gap-2 sm:gap-6 mb-3 sm:mb-6">
+      {/* Key Performance Metrics - Clickable Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {/* Theatres Operational Card */}
         <div
           onClick={() => setShowTheatreOpsModal(true)}
-          className="bg-white rounded-lg border-2 border-gray-300 p-2 sm:p-6 cursor-pointer shadow-md hover:shadow-xl hover:border-blue-500 hover:scale-105 transition-all duration-200 hover:bg-blue-50"
+          className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border-2 border-blue-200 p-4 cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200 group"
         >
-          <div className="flex items-center justify-between mb-1 sm:mb-3">
-            <Activity className="w-4 h-4 sm:w-8 sm:h-8 text-blue-600" />
-            <span className="text-[8px] sm:text-xs bg-blue-600 text-white px-1 sm:px-2.5 py-0.5 sm:py-1 rounded font-semibold">Live</span>
+          <div className="flex items-center justify-between mb-2">
+            <Activity className="w-8 h-8 text-blue-600 group-hover:scale-110 transition-transform" />
+            <span className="text-xs bg-blue-600 text-white px-2 py-1 rounded font-medium">Live</span>
           </div>
-          <h3 className="text-sm sm:text-4xl font-bold text-gray-900">
+          <h3 className="text-2xl font-bold text-gray-900">
             {selectedUnit === 'recovery' ? 'N/A' : `${theatreStats.running}/${theatreStats.total}`}
           </h3>
-          <p className="text-gray-700 font-semibold mt-0 sm:mt-2">
-            <span className="sm:hidden text-[10px]">Theatres</span>
-            <span className="hidden sm:inline text-base">Theatres Operational</span>
-          </p>
+          <p className="text-sm text-gray-700 font-medium">Theatres Operational</p>
+          {selectedUnit !== 'recovery' && theatreStats.total - theatreStats.running > 0 && (
+            <p className="text-xs text-orange-600 mt-2 font-medium">
+              ⚠ {theatreStats.total - theatreStats.running} theatre{theatreStats.total - theatreStats.running > 1 ? 's' : ''} closed
+            </p>
+          )}
+          {selectedUnit !== 'recovery' && theatreStats.total - theatreStats.running === 0 && (
+            <p className="text-xs text-green-600 mt-2 font-medium">✓ All theatres operational</p>
+          )}
+          {selectedUnit === 'recovery' && (
+            <p className="text-xs text-gray-500 mt-2 font-medium">Recovery areas active</p>
+          )}
+          <p className="text-xs text-blue-600 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click for details →</p>
         </div>
 
         {/* Staff On Duty Card */}
         <div
           onClick={() => setShowStaffDutyModal(true)}
-          className="bg-white rounded-lg border-2 border-gray-300 p-2 sm:p-6 cursor-pointer shadow-md hover:shadow-xl hover:border-green-500 hover:scale-105 transition-all duration-200 hover:bg-green-50"
+          className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg border-2 border-green-200 p-4 cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200 group"
         >
-          <div className="flex items-center justify-between mb-1 sm:mb-3">
-            <Users className="w-4 h-4 sm:w-8 sm:h-8 text-green-600" />
-            <span className="text-[8px] sm:text-xs bg-green-600 text-white px-1 sm:px-2.5 py-0.5 sm:py-1 rounded font-semibold">
-              {selectedUnit === 'recovery' ? 'Rec' : 'OK'}
+          <div className="flex items-center justify-between mb-2">
+            <Users className="w-8 h-8 text-green-600 group-hover:scale-110 transition-transform" />
+            <span className="text-xs bg-green-600 text-white px-2 py-1 rounded font-medium">
+              {selectedUnit === 'recovery' ? 'Recovery' : 'Optimal'}
             </span>
           </div>
-          <h3 className="text-sm sm:text-4xl font-bold text-gray-900">{staffCount}</h3>
-          <p className="text-gray-700 font-semibold mt-0 sm:mt-2">
-            <span className="sm:hidden text-[10px]">Staff</span>
-            <span className="hidden sm:inline text-base">Staff on Duty</span>
-          </p>
+          <h3 className="text-2xl font-bold text-gray-900">{staffCount}</h3>
+          <p className="text-sm text-gray-900 font-medium">Staff On Duty</p>
+          {selectedUnit !== 'recovery' && (staffOnBreak > 0 || staffDelayed > 0) && (
+            <p className="text-xs text-orange-600 mt-2 font-medium">
+              {staffOnBreak > 0 && `${staffOnBreak} on break`}
+              {staffOnBreak > 0 && staffDelayed > 0 && ' • '}
+              {staffDelayed > 0 && `${staffDelayed} delayed`}
+            </p>
+          )}
+          {selectedUnit !== 'recovery' && staffOnBreak === 0 && staffDelayed === 0 && staffCount > 0 && (
+            <p className="text-xs text-green-600 mt-2 font-medium">✓ All staff active</p>
+          )}
+          {selectedUnit === 'recovery' && staffCount === 0 && (
+            <p className="text-xs text-gray-500 mt-2 font-medium">Recovery staff tracking</p>
+          )}
+          <p className="text-xs text-green-600 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click for details →</p>
         </div>
 
         {/* Avg Turnover Time Card */}
         <div
           onClick={() => setShowTurnoverModal(true)}
-          className="bg-white rounded-lg border-2 border-gray-300 p-2 sm:p-6 cursor-pointer shadow-md hover:shadow-xl hover:border-purple-500 hover:scale-105 transition-all duration-200 hover:bg-purple-50"
+          className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border-2 border-purple-200 p-4 cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200 group"
         >
-          <div className="flex items-center justify-between mb-1 sm:mb-3">
-            <Clock className="w-4 h-4 sm:w-8 sm:h-8 text-purple-600" />
-            <span className="text-[8px] sm:text-xs bg-purple-600 text-white px-1 sm:px-2.5 py-0.5 sm:py-1 rounded font-semibold">OK</span>
+          <div className="flex items-center justify-between mb-2">
+            <Clock className="w-8 h-8 text-purple-600 group-hover:scale-110 transition-transform" />
+            <span className="text-xs bg-purple-600 text-white px-2 py-1 rounded font-medium">On Track</span>
           </div>
-          <h3 className="text-sm sm:text-4xl font-bold text-gray-900">18m</h3>
-          <p className="text-gray-700 font-semibold mt-0 sm:mt-2">
-            <span className="sm:hidden text-[10px]">Turnover</span>
-            <span className="hidden sm:inline text-base">Avg Turnover Time</span>
-          </p>
+          <h3 className="text-2xl font-bold text-gray-900">18 min</h3>
+          <p className="text-sm text-gray-900 font-medium">Avg Turnover Time</p>
+          <p className="text-xs text-green-600 mt-2 font-medium">↓ 5 min vs target (23 min)</p>
+          <p className="text-xs text-purple-600 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click for details →</p>
         </div>
 
         {/* Efficiency Score Card */}
         <div
           onClick={() => setShowEfficiencyModal(true)}
-          className="bg-white rounded-lg border-2 border-gray-300 p-2 sm:p-6 cursor-pointer shadow-md hover:shadow-xl hover:border-orange-500 hover:scale-105 transition-all duration-200 hover:bg-orange-50"
+          className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg border-2 border-orange-200 p-4 cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200 group"
         >
-          <div className="flex items-center justify-between mb-1 sm:mb-3">
-            <TrendingUp className="w-4 h-4 sm:w-8 sm:h-8 text-orange-600" />
-            <span className="text-[8px] sm:text-xs bg-orange-600 text-white px-1 sm:px-2.5 py-0.5 sm:py-1 rounded font-semibold">High</span>
+          <div className="flex items-center justify-between mb-2">
+            <TrendingUp className="w-8 h-8 text-orange-600 group-hover:scale-110 transition-transform" />
+            <span className="text-xs bg-orange-600 text-white px-2 py-1 rounded font-medium">High</span>
           </div>
-          <h3 className="text-sm sm:text-4xl font-bold text-gray-900">94%</h3>
-          <p className="text-gray-700 font-semibold mt-0 sm:mt-2">
-            <span className="sm:hidden text-[10px]">Efficiency</span>
-            <span className="hidden sm:inline text-base">Efficiency Score</span>
-          </p>
+          <h3 className="text-2xl font-bold text-gray-900">94%</h3>
+          <p className="text-sm text-gray-900 font-medium">Efficiency Score</p>
+          <p className="text-xs text-green-600 mt-2 font-medium">↑ 3% from yesterday</p>
+          <p className="text-xs text-orange-600 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click for details →</p>
         </div>
       </div>
-      </div>
 
-      {/* Two-Panel Layout for Desktop, Single Column for Mobile */}
-      <div className="flex-1 overflow-y-auto px-3">
-        <div className="flex flex-col md:flex-row gap-3 sm:gap-6 h-full">
-          {/* LEFT PANEL: Theatre Operations */}
-          <div className="flex-1 md:w-[65%] overflow-y-auto">
-        {/* Theatre Team Allocations */}
-        {selectedUnit !== 'recovery' && (
-            <div className="bg-white border border-gray-200 rounded-lg p-3 sm:p-6 mb-3 sm:mb-6 shadow-sm">
-          <h2 className="text-base sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3 flex items-center">
-            <Users className="w-5 h-5 sm:w-6 sm:h-6 mr-2 text-blue-600" />
+      {/* Theatre Team Allocations - Full Width */}
+      {selectedUnit !== 'recovery' && (
+        <div className="bg-white border border-gray-200 rounded-lg p-5 mb-6">
+          <h2 className="text-lg font-semibold text-gray-800 mb-2 flex items-center">
+            <Users className="w-5 h-5 mr-2 text-blue-600" />
             {selectedUnit === 'all' && (
               <>
                 <span className="lg:hidden">All Theatres</span>
@@ -1064,28 +1075,31 @@ export default function DashboardView() {
               </>
             )}
           </h2>
-          <div className="text-[10px] sm:text-sm text-gray-600 mb-2 sm:mb-3 hidden sm:block">
-            {filteredTheatres.filter(t => t.status === 'surgery_started').length} Surgery, {filteredTheatres.filter(t => t.status === 'anaesthetic_room').length} Anaes, {filteredTheatres.filter(t => t.status === 'standby').length} Standby, {filteredTheatres.filter(t => t.status === 'closed').length} Closed
+          <div className="text-xs font-normal text-gray-500 mb-4">
+            {filteredTheatres.filter(t => t.status === 'surgery_started').length} Surgery Started, {filteredTheatres.filter(t => t.status === 'anaesthetic_room').length} Anaesthetic Room, {filteredTheatres.filter(t => t.status === 'patient_sent').length} Patient Sent, {filteredTheatres.filter(t => t.status === 'standby').length} Standby, {filteredTheatres.filter(t => t.status === 'closed').length} Closed
           </div>
-          <div className="max-h-[600px] overflow-y-auto pr-1">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+          <div className="max-h-[600px] overflow-y-auto pr-2">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3">
               {filteredTheatres.map((allocation, idx) => (
               <div
                 key={idx}
-                className={`p-3 sm:p-5 rounded-lg cursor-pointer group border-2 shadow-md hover:shadow-xl hover:scale-[1.02] transition-all duration-200 ${
+                className={`p-3 rounded-lg transition-colors cursor-pointer group border ${
                   allocation.status === 'closed'
-                    ? 'bg-gray-50 border-gray-400 opacity-75 hover:border-gray-500'
-                    : 'bg-white border-gray-300 hover:border-teal-500 hover:bg-teal-50/30'
+                    ? 'bg-gray-100 border-gray-400 opacity-75'
+                    : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
                 }`}
                 onClick={() => handleTheatreClick(allocation.theatre)}
               >
-                <div className="mb-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="font-bold text-base sm:text-lg text-gray-900 flex items-center">
+                <div className="mb-2">
+                  <div className="flex items-center justify-between mb-1">
+                    <p
+                      className="font-bold text-sm text-gray-900 flex items-center cursor-help"
+                      title={`Extension: ${theatreExtensions[allocation.theatre] || 'N/A'}`}
+                    >
                       {allocation.theatre}
-                      <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 ml-1 text-gray-400 group-hover:text-teal-600" />
+                      <ChevronRight className="w-4 h-4 ml-1 text-gray-400 group-hover:text-gray-600 group-hover:translate-x-0.5 transition-all" />
                     </p>
-                    <span className={`text-xs sm:text-sm px-2 sm:px-2.5 py-1 rounded font-bold ${
+                    <span className={`text-xs px-2 py-0.5 rounded font-medium ${
                       allocation.status === 'surgery_started' ? 'bg-green-100 text-green-700' :
                       allocation.status === 'anaesthetic_room' ? 'bg-purple-100 text-purple-700' :
                       allocation.status === 'patient_sent' ? 'bg-blue-100 text-blue-700' :
@@ -1093,21 +1107,30 @@ export default function DashboardView() {
                       allocation.status === 'closed' ? 'bg-red-100 text-red-700' :
                       'bg-yellow-100 text-yellow-700'
                     }`}>
-                      {allocation.status === 'surgery_started' ? 'SURG' :
-                       allocation.status === 'anaesthetic_room' ? 'ANAES' :
-                       allocation.status === 'patient_sent' ? 'SENT' :
-                       allocation.status === 'standby' ? 'STBY' :
-                       allocation.status === 'closed' ? 'CLSD' : 'OTHER'}
+                      {allocation.patientStatus || (allocation.status === 'closed' ? '⛔ CLOSED' : allocation.status.toUpperCase())}
                     </span>
                   </div>
-                  <p className="text-sm sm:text-base text-gray-700 font-semibold mb-1">{allocation.specialty}</p>
-                  <p className="text-xs sm:text-sm text-gray-600 hidden sm:block">
-                    {allocation.session}
-                    {allocation.sessionsCount > 0 && ` • ${allocation.casesCompleted || 0}/${allocation.sessionsCount}`}
+                  <p className="text-sm sm:text-xs text-gray-900 font-medium">{allocation.specialty}</p>
+                  <p className="text-xs text-gray-900">
+                    {allocation.session} {allocation.sessionsCount > 0 && `• ${allocation.sessionsCount} Session${allocation.sessionsCount > 1 ? 's' : ''}`}
+                    {allocation.casesCompleted !== undefined && allocation.sessionsCount > 0 && (
+                      <span className="ml-1 text-blue-600 font-medium">
+                        • {allocation.casesCompleted}/{allocation.sessionsCount} completed
+                      </span>
+                    )}
                   </p>
+                  {allocation.currentProcedure && allocation.status !== 'closed' && (
+                    <p className="text-xs text-green-700 font-medium mt-1">
+                      Ongoing: {allocation.currentProcedure}
+                    </p>
+                  )}
+                  {allocation.nextCase && allocation.status !== 'closed' && (
+                    <p className="text-xs text-blue-600 mt-0.5">
+                      Next Case: {allocation.nextCase}
+                    </p>
+                  )}
                 </div>
-                {/* Staff details - Shown on both mobile and desktop */}
-                <div className="space-y-1 sm:space-y-1.5">
+                <div className="space-y-1 text-xs">
                   {Object.entries({
                     'Cons': { ...allocation.team.surgeon, role: 'Consultant Surgeon', fullLabel: 'Consultant' },
                     'Assist': { ...allocation.team.assistant, role: 'Assistant Surgeon', fullLabel: 'Assistant' },
@@ -1132,17 +1155,17 @@ export default function DashboardView() {
                         {/* Single row layout for both mobile and desktop */}
                         <div className="flex items-center justify-between">
                           <div className="flex items-center flex-1 min-w-0">
-                            <span className={`text-[10px] sm:text-sm mr-1 sm:mr-2 min-w-[60px] sm:min-w-[100px] flex-shrink-0 font-semibold ${staff.name === 'VACANT' ? 'text-gray-400' : 'text-gray-700'}`}>
+                            <span className={`text-[10px] mr-1 min-w-[70px] flex-shrink-0 ${staff.name === 'VACANT' ? 'text-gray-400' : 'text-gray-900'}`}>
                               <span className="lg:hidden">{label}:</span>
                               <span className="hidden lg:inline">{staff.fullLabel || label}:</span>
                             </span>
                             {staff.name === 'VACANT' ? (
-                              <span className="text-gray-400 italic text-[10px] sm:text-sm">Vacant</span>
+                              <span className="text-gray-400 italic text-[10px]">Vacant</span>
                             ) : (
-                              <div className="flex items-center gap-0.5 sm:gap-1.5 min-w-0 flex-wrap">
+                              <div className="flex items-center gap-1 min-w-0">
                                 <span
-                                  className={`cursor-pointer text-blue-600 hover:text-blue-800 hover:underline font-medium text-[10px] sm:text-sm ${
-                                    needsReliefHighlight ? 'text-orange-600 hover:text-orange-800 font-bold' : ''
+                                  className={`cursor-pointer hover:text-blue-600 hover:underline truncate text-[10px] ${
+                                    needsReliefHighlight ? 'text-orange-600 font-semibold' : ''
                                   }`}
                                   onClick={(e) => {
                                     e.stopPropagation();
@@ -1155,7 +1178,7 @@ export default function DashboardView() {
                                 </span>
                               {staff.scrubbed && (
                                 <span
-                                  className="italic text-[9px] sm:text-xs text-teal-700 font-medium flex-shrink-0 bg-teal-50 px-1 sm:px-1.5 py-0.5 rounded"
+                                  className="italic text-[9px] text-gray-900 flex-shrink-0"
                                   title={
                                     staff.etf
                                       ? `ETF: Approx ${staff.etf} (${calculateDuration(allocation.surgeryStartTime || '08:00', staff.etf)} duration)${
@@ -1185,8 +1208,8 @@ export default function DashboardView() {
                           )}
                           </div>
                           {staff.shift && staff.name !== 'VACANT' && (
-                            <span className={`text-[9px] sm:text-xs text-gray-600 ml-1 sm:ml-2 flex-shrink-0 font-medium ${
-                              needsReliefHighlight ? 'text-orange-600 font-bold bg-orange-50 px-1 sm:px-1.5 py-0.5 rounded' : 'bg-gray-100 px-1 sm:px-1.5 py-0.5 rounded'
+                            <span className={`text-xs sm:text-[9px] text-gray-900 sm:ml-1 flex-shrink-0 ${
+                              needsReliefHighlight ? 'text-orange-500 font-medium' : ''
                             }`}>
                               {staff.shift}
                             </span>
@@ -1324,189 +1347,124 @@ export default function DashboardView() {
           </div>
         </div>
       )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Critical Alerts */}
+        <div className="bg-white border border-gray-200 rounded-lg p-5">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+            <AlertTriangle className="w-5 h-5 mr-2 text-red-600" />
+            Critical Alerts
+          </h2>
+          <div className="space-y-3">
+            <div className="p-3 bg-red-50 border-l-4 border-red-500 rounded">
+              <div className="flex items-start">
+                <XCircle className="w-4 h-4 text-red-600 mt-0.5 mr-2 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-red-800">Theatre Closures</p>
+                  <p className="text-xs text-red-700 mt-1">Theatre 2 - Unpopulated list</p>
+                  <p className="text-xs text-red-700">Theatre 9 - Equipment failure & staff shortage</p>
+                  <p className="text-xs text-red-600 mt-2">Action: Cases rescheduled, maintenance notified</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-3 bg-red-50 border-l-4 border-red-500 rounded">
+              <div className="flex items-start">
+                <XCircle className="w-4 h-4 text-red-600 mt-0.5 mr-2 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-red-800">Low Inventory Alert</p>
+                  <p className="text-xs text-red-700 mt-1">Hip implants (size L) - Only 2 units remaining</p>
+                  <p className="text-xs text-red-600 mt-2">Action: Order placed, ETA 2 hours</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-3 bg-yellow-50 border-l-4 border-yellow-500 rounded">
+              <div className="flex items-start">
+                <AlertCircle className="w-4 h-4 text-yellow-600 mt-0.5 mr-2 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-yellow-800">Staff Shortage Warning</p>
+                  <p className="text-xs text-yellow-700 mt-1">Night shift - 1 scrub nurse short</p>
+                  <p className="text-xs text-yellow-600 mt-2">Action: Agency staff requested</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-3 bg-green-50 border-l-4 border-green-500 rounded">
+              <div className="flex items-start">
+                <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 mr-2 flex-shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-green-800">Issue Resolved</p>
+                  <p className="text-xs text-green-700 mt-1">Theatre 2 HVAC system restored</p>
+                  <p className="text-xs text-green-600 mt-2">Resolved 10 minutes ago</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        {/* End LEFT PANEL */}
 
-        {/* RIGHT PANEL: Critical Alerts, Upcoming Cases, etc. - Desktop Only */}
-        <div className="hidden md:block md:w-[35%] space-y-4 overflow-y-auto">
-            {/* Critical Alerts Section */}
-            <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-              <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
-                <AlertTriangle className="w-5 h-5 mr-2 text-red-600" />
-                Critical Alerts
-              </h3>
-              <div className="space-y-2">
-                <div className="p-3 bg-red-50 border-l-4 border-red-600 rounded">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold text-red-900">Theatre 3 - Equipment Issue</p>
-                      <p className="text-xs text-red-700 mt-1">Laparoscopy tower malfunction - Urgent repair needed</p>
-                      <p className="text-xs text-red-600 mt-1">08:45 AM</p>
-                    </div>
-                    <XCircle className="w-4 h-4 text-red-600 cursor-pointer hover:text-red-800" />
+        {/* Upcoming Cases */}
+        <div className="bg-white border border-gray-200 rounded-lg p-5">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+            <Calendar className="w-5 h-5 mr-2 text-purple-600" />
+            Upcoming Cases
+          </h2>
+          <div className="space-y-3">
+            {[
+              { time: '14:00', procedure: 'Total Knee Replacement', surgeon: 'Mr. Johnson', theatre: 'Theatre 1', duration: '2h' },
+              { time: '14:30', procedure: 'Cholecystectomy', surgeon: 'Ms. Chen', theatre: 'Theatre 2', duration: '1h 30m' },
+              { time: '15:00', procedure: 'Cataract Surgery', surgeon: 'Dr. Patel', theatre: 'Theatre 4', duration: '45m' },
+              { time: '16:00', procedure: 'Hernia Repair', surgeon: 'Mr. Williams', theatre: 'Theatre 2', duration: '1h' },
+              { time: '16:30', procedure: 'Carpal Tunnel Release', surgeon: 'Ms. Brown', theatre: 'Theatre 5', duration: '30m' },
+            ].map((caseItem, idx) => (
+              <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <div className="flex items-center space-x-3">
+                  <div className="text-center">
+                    <p className="text-xs text-gray-500">Start</p>
+                    <p className="font-bold text-sm">{caseItem.time}</p>
+                  </div>
+                  <div className="border-l pl-3">
+                    <p className="font-medium text-sm">{caseItem.procedure}</p>
+                    <p className="text-xs text-gray-600">{caseItem.surgeon} • {caseItem.theatre}</p>
                   </div>
                 </div>
-                <div className="p-3 bg-orange-50 border-l-4 border-orange-600 rounded">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold text-orange-900">Theatre 6 - Staff Relief Urgent</p>
-                      <p className="text-xs text-orange-700 mt-1">RN Chen needs relief - 12 hour shift ongoing</p>
-                      <p className="text-xs text-orange-600 mt-1">10:15 AM</p>
-                    </div>
-                    <XCircle className="w-4 h-4 text-orange-600 cursor-pointer hover:text-orange-800" />
-                  </div>
-                </div>
-                <div className="p-3 bg-yellow-50 border-l-4 border-yellow-600 rounded">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold text-yellow-900">DSU 2 - Case Delay</p>
-                      <p className="text-xs text-yellow-700 mt-1">Patient not yet arrived - 30 min delay expected</p>
-                      <p className="text-xs text-yellow-600 mt-1">11:20 AM</p>
-                    </div>
-                    <XCircle className="w-4 h-4 text-yellow-600 cursor-pointer hover:text-yellow-800" />
-                  </div>
-                </div>
+                <span className="text-xs bg-gray-200 px-2 py-1 rounded">{caseItem.duration}</span>
               </div>
-            </div>
-
-            {/* Upcoming Cases Section */}
-            <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-              <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
-                <Calendar className="w-5 h-5 mr-2 text-blue-600" />
-                Upcoming Cases
-              </h3>
-              <div className="space-y-2">
-                <div className="p-3 bg-blue-50 border border-blue-200 rounded">
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="text-sm font-semibold text-blue-900">Theatre 1 - 13:00</p>
-                    <span className="text-xs px-2 py-0.5 bg-blue-600 text-white rounded font-medium">Next</span>
-                  </div>
-                  <p className="text-xs text-blue-700">Total Hip Replacement</p>
-                  <p className="text-xs text-blue-600 mt-1">Orthopaedics • Mr. Thompson</p>
-                </div>
-                <div className="p-3 bg-gray-50 border border-gray-200 rounded">
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="text-sm font-semibold text-gray-900">Theatre 4 - 14:00</p>
-                    <span className="text-xs px-2 py-0.5 bg-gray-400 text-white rounded font-medium">Scheduled</span>
-                  </div>
-                  <p className="text-xs text-gray-700">Laparoscopic Cholecystectomy</p>
-                  <p className="text-xs text-gray-600 mt-1">General Surgery • Mr. Davies</p>
-                </div>
-                <div className="p-3 bg-gray-50 border border-gray-200 rounded">
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="text-sm font-semibold text-gray-900">Theatre 7 - 14:30</p>
-                    <span className="text-xs px-2 py-0.5 bg-gray-400 text-white rounded font-medium">Scheduled</span>
-                  </div>
-                  <p className="text-xs text-gray-700">Coronary Artery Bypass</p>
-                  <p className="text-xs text-gray-600 mt-1">Cardiothoracic • Mr. Williams</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Critical Equipment Status Section */}
-            <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-              <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
-                <Package className="w-5 h-5 mr-2 text-purple-600" />
-                Critical Equipment Status
-              </h3>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between p-2 bg-red-50 rounded">
-                  <div className="flex items-center">
-                    <AlertCircle className="w-4 h-4 text-red-600 mr-2" />
-                    <div>
-                      <p className="text-sm font-semibold text-red-900">Laparoscopy Tower</p>
-                      <p className="text-xs text-red-700">Theatre 3</p>
-                    </div>
-                  </div>
-                  <span className="text-xs px-2 py-0.5 bg-red-600 text-white rounded font-medium">Down</span>
-                </div>
-                <div className="flex items-center justify-between p-2 bg-yellow-50 rounded">
-                  <div className="flex items-center">
-                    <AlertCircle className="w-4 h-4 text-yellow-600 mr-2" />
-                    <div>
-                      <p className="text-sm font-semibold text-yellow-900">C-Arm X-Ray</p>
-                      <p className="text-xs text-yellow-700">Theatre 5</p>
-                    </div>
-                  </div>
-                  <span className="text-xs px-2 py-0.5 bg-yellow-600 text-white rounded font-medium">Maintenance</span>
-                </div>
-                <div className="flex items-center justify-between p-2 bg-green-50 rounded">
-                  <div className="flex items-center">
-                    <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
-                    <div>
-                      <p className="text-sm font-semibold text-green-900">Ventilators</p>
-                      <p className="text-xs text-green-700">All Theatres</p>
-                    </div>
-                  </div>
-                  <span className="text-xs px-2 py-0.5 bg-green-600 text-white rounded font-medium">OK</span>
-                </div>
-                <div className="flex items-center justify-between p-2 bg-green-50 rounded">
-                  <div className="flex items-center">
-                    <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
-                    <div>
-                      <p className="text-sm font-semibold text-green-900">Monitors</p>
-                      <p className="text-xs text-green-700">All Theatres</p>
-                    </div>
-                  </div>
-                  <span className="text-xs px-2 py-0.5 bg-green-600 text-white rounded font-medium">OK</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Relief Requests Section */}
-            <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-              <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
-                <UserCheck className="w-5 h-5 mr-2 text-orange-600" />
-                Relief Requests
-              </h3>
-              <div className="space-y-2">
-                <div className="p-3 bg-orange-50 border-l-4 border-orange-600 rounded">
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="text-sm font-semibold text-orange-900">RN Sarah Chen</p>
-                    <span className="text-xs px-2 py-0.5 bg-orange-600 text-white rounded font-medium">Urgent</span>
-                  </div>
-                  <p className="text-xs text-orange-700">Theatre 6 • Scrub Nurse</p>
-                  <p className="text-xs text-orange-600 mt-1">On duty since 08:00 • 12 hours</p>
-                </div>
-                <div className="p-3 bg-yellow-50 border-l-4 border-yellow-600 rounded">
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="text-sm font-semibold text-yellow-900">ODP Michael Torres</p>
-                    <span className="text-xs px-2 py-0.5 bg-yellow-600 text-white rounded font-medium">Pending</span>
-                  </div>
-                  <p className="text-xs text-yellow-700">Theatre 1 • Anaesthetic Practitioner</p>
-                  <p className="text-xs text-yellow-600 mt-1">On duty since 08:00 • 11 hours</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Wellbeing Breaks Section */}
-            <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
-              <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center">
-                <Coffee className="w-5 h-5 mr-2 text-teal-600" />
-                Wellbeing Breaks
-              </h3>
-              <div className="space-y-2">
-                <div className="p-3 bg-teal-50 border border-teal-200 rounded">
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="text-sm font-semibold text-teal-900">RN Emma Wilson</p>
-                    <span className="text-xs px-2 py-0.5 bg-teal-600 text-white rounded font-medium">On Break</span>
-                  </div>
-                  <p className="text-xs text-teal-700">Theatre 2 • Scrub Nurse</p>
-                  <p className="text-xs text-teal-600 mt-1">Break started: 11:30 • Returns: 12:00</p>
-                </div>
-                <div className="p-3 bg-gray-50 border border-gray-200 rounded">
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="text-sm font-semibold text-gray-900">Dr. James Parker</p>
-                    <span className="text-xs px-2 py-0.5 bg-gray-400 text-white rounded font-medium">Scheduled</span>
-                  </div>
-                  <p className="text-xs text-gray-700">Theatre 5 • Anaesthetist</p>
-                  <p className="text-xs text-gray-600 mt-1">Break scheduled: 13:00</p>
-                </div>
-              </div>
-            </div>
+            ))}
+          </div>
         </div>
-        {/* End RIGHT PANEL */}
-      </div>
+
+        {/* Critical Equipment Status */}
+        <div className="bg-white border border-gray-200 rounded-lg p-5">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+            <Package className="w-5 h-5 mr-2 text-green-600" />
+            Critical Equipment Status
+          </h2>
+          <div className="space-y-3">
+            {[
+              { item: 'Anaesthesia Machines', available: 26, total: 30, status: 'good' },
+              { item: 'C-Arms', available: 8, total: 10, status: 'good' },
+              { item: 'Laparoscopic Towers', available: 12, total: 15, status: 'good' },
+              { item: 'Microscopes', available: 5, total: 8, status: 'limited' },
+              { item: 'Da Vinci Robots', available: 2, total: 2, status: 'optimal' },
+              { item: 'Hybrid Lab Equipment', available: 1, total: 1, status: 'optimal' },
+            ].map((equipment, idx) => (
+              <div key={idx} className="flex items-center justify-between">
+                <span className="text-sm">{equipment.item}</span>
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs text-gray-600">{equipment.available}/{equipment.total}</span>
+                  <span className={`text-xs px-2 py-0.5 rounded ${
+                    equipment.status === 'optimal' ? 'bg-green-100 text-green-700' :
+                    equipment.status === 'good' ? 'bg-blue-100 text-blue-700' :
+                    'bg-yellow-100 text-yellow-700'
+                  }`}>
+                    {equipment.status}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Modals */}

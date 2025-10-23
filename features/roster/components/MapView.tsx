@@ -156,12 +156,12 @@ export default function MapView({ staff, userLocation, selectedStaff, onSelectSt
       <MapContainer
         center={mapCenter}
         zoom={mapZoom}
-        style={{ height: '100%', width: '100%' }}
+        style={{ height: '100%', width: '100%', background: '#1a1a1a' }}
         zoomControl={true}
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://carto.com/">CartoDB</a>'
+          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         />
 
         <RecenterMap center={mapCenter} />
@@ -319,61 +319,42 @@ export default function MapView({ staff, userLocation, selectedStaff, onSelectSt
         })}
       </MapContainer>
 
-      {/* Map Legend */}
-      <div className="absolute bottom-6 left-6 bg-white rounded-xl shadow-lg border border-gray-200 p-4 z-[1000]">
-        <h3 className="text-sm font-semibold text-gray-900 mb-3">Map Legend</h3>
-        <div className="space-y-2">
-          <div className="flex items-center space-x-2">
-            <div className="w-6 h-6 bg-green-500 rounded-full border-2 border-white shadow-sm flex items-center justify-center">
-              <div className="w-2 h-2 bg-white rounded-full"></div>
-            </div>
-            <span className="text-xs text-gray-700">Available Staff</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-6 h-6 bg-gray-500 rounded-full border-2 border-white shadow-sm flex items-center justify-center">
-              <div className="w-2 h-2 bg-white rounded-full"></div>
-            </div>
-            <span className="text-xs text-gray-700">Unavailable Staff</span>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-6 h-6 bg-blue-500 rounded-full border-4 border-white shadow-md"></div>
-            <span className="text-xs text-gray-700">Your Location</span>
-          </div>
-        </div>
-      </div>
-
       {/* Staff Count Badge */}
-      <div className="absolute top-6 left-6 bg-white rounded-xl shadow-lg border border-gray-200 px-4 py-3 z-[1000]">
+      <div className="absolute top-6 left-6 bg-gray-900/95 backdrop-blur-sm rounded-xl shadow-2xl border border-gray-700 px-4 py-3 z-[1000]">
         <div className="flex items-center space-x-2">
           <div className="w-10 h-10 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-lg">{staff.length}</span>
           </div>
           <div>
-            <p className="text-xs text-gray-600">Available Staff</p>
-            <p className="text-sm font-semibold text-gray-900">in this area</p>
+            <p className="text-xs text-gray-400">Available Staff</p>
+            <p className="text-sm font-semibold text-white">in this area</p>
           </div>
         </div>
       </div>
 
-      {/* Legend */}
-      <div className="absolute bottom-6 left-6 bg-white rounded-xl shadow-lg border border-gray-200 p-3 z-[1000]">
-        <p className="text-xs font-semibold text-gray-900 mb-2">Status Legend</p>
+      {/* Status Legend */}
+      <div className="absolute bottom-6 left-6 bg-gray-900/95 backdrop-blur-sm rounded-xl shadow-2xl border border-gray-700 p-3 z-[1000]">
+        <p className="text-xs font-semibold text-white mb-2">Status Legend</p>
         <div className="space-y-1.5">
           <div className="flex items-center space-x-2">
             <div className="w-4 h-4 rounded-full bg-green-500"></div>
-            <span className="text-xs text-gray-700">Available</span>
+            <span className="text-xs text-gray-300">Available</span>
           </div>
           <div className="flex items-center space-x-2">
             <div className="w-4 h-4 rounded-full bg-amber-500"></div>
-            <span className="text-xs text-gray-700">⏳ Pending</span>
+            <span className="text-xs text-gray-300">⏳ Pending</span>
           </div>
           <div className="flex items-center space-x-2">
             <div className="w-4 h-4 rounded-full bg-blue-500"></div>
-            <span className="text-xs text-gray-700">✅ Accepted</span>
+            <span className="text-xs text-gray-300">✅ Accepted</span>
           </div>
           <div className="flex items-center space-x-2">
             <div className="w-4 h-4 rounded-full bg-red-500"></div>
-            <span className="text-xs text-gray-700">❌ Declined</span>
+            <span className="text-xs text-gray-300">❌ Declined</span>
+          </div>
+          <div className="flex items-center space-x-2 pt-1.5 border-t border-gray-700 mt-1.5">
+            <div className="w-4 h-4 rounded-full bg-blue-400 border-2 border-white"></div>
+            <span className="text-xs text-gray-300">Your Location</span>
           </div>
         </div>
       </div>

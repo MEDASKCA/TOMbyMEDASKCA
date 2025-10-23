@@ -59,6 +59,7 @@ export interface ScheduledCase {
   anaesthetist: string;
   anaesNP: string;
   scrubNP: string;
+  hca?: string;
   equipment: string[];
   requirements: string[];
   notes: string[];
@@ -287,8 +288,9 @@ export function generateMonthSchedule(): ScheduledCase[] {
         const assistant = randomItem(['A. Gallagher', 'T. Wilson', 'C. Lewis', 'M. Harper', 'S. Davis']);
         const anaesthetist = randomItem(anaesthetists);
         const scrubNurse = randomItem(scrubNurses);
-        const anaesNP = randomItem(['NP K. Roberts', 'NP L. Martinez', 'NP D. Brown']);
-        const scrubNP = randomItem(['NP M. Taylor', 'NP J. Anderson', 'NP R. White']);
+        const anaesNP = randomItem(['RN K. Roberts', 'ODP L. Martinez', 'RN D. Brown', 'ODP S. Clarke']);
+        const scrubNP = randomItem(['RN M. Taylor', 'ODP J. Anderson', 'RN R. White', 'ODP P. Hughes']);
+        const hca = randomItem(['HCA J. Williams', 'HCA S. Thompson', 'HCA N. Garcia', 'HCA M. Rodriguez']);
 
         const hours = Math.floor(currentTime / 60);
         const mins = currentTime % 60;
@@ -326,6 +328,7 @@ export function generateMonthSchedule(): ScheduledCase[] {
           anaesthetist: anaesthetist.name,
           anaesNP: anaesNP,
           scrubNP: scrubNP,
+          hca: hca,
           patient: {
             mrn: generateMRN(),
             age: Math.floor(Math.random() * 70) + 18,
