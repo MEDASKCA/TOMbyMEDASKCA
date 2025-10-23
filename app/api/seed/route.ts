@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { seedAllData } from '@/lib/firebase/seed';
 
+// Static export configuration
+export const dynamic = 'force-static';
+
 /**
  * API endpoint to seed the database
  * POST /api/seed

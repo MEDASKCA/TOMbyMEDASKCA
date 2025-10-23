@@ -3,6 +3,9 @@ import { collection, writeBatch, doc } from 'firebase/firestore';
 import { db } from '@/lib/firebase/config';
 import { COLLECTIONS, InventoryItem } from '@/types/tom';
 
+// Static export configuration
+export const dynamic = 'force-static';
+
 export async function POST(request: NextRequest) {
   try {
     const { instruments } = await request.json();

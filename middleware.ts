@@ -2,30 +2,8 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
-  // Skip middleware for API routes - they handle their own logic
-  if (request.nextUrl.pathname.startsWith('/api/')) {
-    return NextResponse.next();
-  }
-
-  // Check if user is authenticated
-  const isAuthenticated = request.cookies.get('tom_authenticated')?.value === 'true';
-
-  // Public paths that don't require authentication
-  const publicPaths = ['/login', '/modern', '/admin'];
-  const isPublicPath = publicPaths.some(path => request.nextUrl.pathname.startsWith(path));
-
-  // If not authenticated and trying to access protected route
-  if (!isPublicPath && !isAuthenticated) {
-    // Redirect to login
-    return NextResponse.redirect(new URL('/login', request.url));
-  }
-
-  // If authenticated and trying to access login page
-  if (isPublicPath && isAuthenticated && request.nextUrl.pathname.startsWith("/login")) {
-    // Redirect to home
-    return NextResponse.redirect(new URL('/', request.url));
-  }
-
+  // For static export (GitHub Pages), skip all middleware logic
+  // This allows the app to work without server-side features
   return NextResponse.next();
 }
 

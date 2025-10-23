@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
-export const runtime = 'nodejs';
-export const dynamic = 'force-dynamic';
+// Static export configuration
+export const dynamic = 'force-static';
 
 export async function POST() {
   const response = NextResponse.json(
